@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Ibraham Mustafa: Wi-Fi test and integration, network validation, and lab automation. 8+ years at Google, Apple, AWS, Cisco, and Broadcom.">
+<meta name="description" content="Ibraham Mustafa: data center and lab infrastructure, Linux deployment, network and wireless validation, and lab automation. 8+ years at Google, Apple, AWS, Cisco, and Broadcom.">
 <meta name="theme-color" content="#0b1218">
 <title>Ibraham Mustafa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -430,15 +430,15 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
   <div class="wrap">
     <div class="hero" id="hero">
       <div>
-        <div class="eyebrow">Wi-Fi &amp; WLAN test · Network validation · Lab automation</div>
+        <div class="eyebrow">Lab &amp; data center infrastructure · Network &amp; wireless validation · Automation</div>
         <h1 id="heroTitle">Every packet, <em>accounted for.</em></h1>
-        <p class="lede">I'm Ibraham, a wireless test and integration engineer with 8+ years at Google, Apple, AWS, Cisco and Broadcom. I've tested Wi-Fi in RF chambers through EVT, DVT and PVT, run Bluetooth interop against nearly every car maker, built Nexus testbeds with Ixia traffic generators, and written the Python that keeps a 5,000-device lab healthy on its own.</p>
+        <p class="lede">I'm Ibraham, an infrastructure and test engineer with 8+ years at Google, Apple, AWS, Cisco and Broadcom. I take labs from bare metal to production: racks, redundant power and networking, PXE-imaged Linux hosts, GPU servers, and the Python that keeps a 5,000-device lab healthy on its own. I've also tested Wi-Fi in RF chambers, run Bluetooth interop against every major car maker, and built Nexus testbeds with Ixia traffic generators.</p>
         <div class="cta">
           <a class="btn sig" href="#topology">Explore the network</a>
           <a class="btn ghost" href="#contact">Get in touch</a>
         </div>
         <div class="badges">
-          <span class="badge">IEEE 802.11</span><span class="badge">WLAN / BT</span><span class="badge">iPerf · Ixia</span><span class="badge">Wireshark</span><span class="badge">Python</span><span class="badge">Jenkins CI</span><span class="badge">CCNA</span>
+          <span class="badge">Linux · PXE</span><span class="badge">Rack &amp; stack</span><span class="badge">GPU servers</span><span class="badge">OSPF · BGP</span><span class="badge">IEEE 802.11</span><span class="badge">Python · Ansible</span><span class="badge">CCNA</span>
         </div>
       </div>
 
@@ -471,9 +471,9 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
       <div class="stat"><b data-count="8" data-suffix="+">8+</b><span>years in labs, networks and test</span></div>
       <div class="stat"><b data-count="500" data-suffix="+">500+</b><span>Wi-Fi, cellular and camera testbeds built</span></div>
       <div class="stat"><b data-count="5000" data-prefix="~">~5,000</b><span>devices kept healthy by my automation</span></div>
-      <div class="stat"><b data-count="1000" data-suffix="+">1,000+</b><span>Wi-Fi/BT controllers firmware-verified</span></div>
+      <div class="stat"><b data-count="300" data-suffix="+">300+</b><span>GPUs across 150+ lab servers I ran</span></div>
       <div class="stat"><b data-count="30" data-prefix="~">~30</b><span>prioritized bugs filed per week</span></div>
-      <div class="stat"><b data-count="2" data-suffix="×">2×</b><span>rack density from a testbed I designed</span></div>
+      <div class="stat"><b data-count="95" data-suffix="%">95%</b><span>partner escalations closed without engineering</span></div>
     </div>
   </div>
 
@@ -633,9 +633,9 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
       <div class="reveal">
         <div class="eyebrow">Contact</div>
         <h2>Let's validate your next release</h2>
-        <p style="color:var(--muted);max-width:52ch">I'm looking for Wi-Fi and wireless test, network validation, lab engineering and test automation roles in the Bay Area. Contract and full-time both work, and I can start immediately.</p>
+        <p style="color:var(--muted);max-width:52ch">I'm looking for data center and AI infrastructure, Linux deployment, network engineering, wireless test and lab automation roles in the Bay Area. Contract and full-time both work, and I can start immediately.</p>
         <div class="targets">
-          <span class="tag">Wi-Fi test &amp; integration</span><span class="tag">WLAN / Bluetooth validation</span><span class="tag">Network test</span><span class="tag">Test automation (Python)</span><span class="tag">Hardware test &amp; lab ops</span><span class="tag">Data center infrastructure</span>
+          <span class="tag">AI &amp; data center infrastructure</span><span class="tag">Linux deployment</span><span class="tag">Wi-Fi test &amp; integration</span><span class="tag">WLAN / Bluetooth validation</span><span class="tag">Network test</span><span class="tag">Test automation (Python)</span><span class="tag">Hardware test &amp; lab ops</span><span class="tag">Data center infrastructure</span>
         </div>
       </div>
       <div class="cards reveal" style="--d:.1s">
@@ -722,49 +722,49 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
 
   /* ================= data ================= */
   const ROLES = [
-    { id: 'bayside', co: 'Google', via: 'via Bayside Solutions', title: 'Wi-Fi Test & Integration Engineer', loc: 'Mountain View, CA', yrs: '2025–26', months: 15, ssid: 'Google-DeviceLab-5G', band: '5 GHz',
-      bullets: ['Wrote Python automation to flash devices at scale and batch-pull device data (IMEI, phone numbers, Wi-Fi chipset and other properties) across a ~5,000-device Android and iOS lab.',
-        'Built an AI-assisted lab-health system that auto-detects and recovers failing devices, logs issues per device, and flags recurring failures on one device or across the fleet.',
-        'Automated a daily health report, prioritized by severity, saving ~10 hours of manual triage a week; auto-filed ~30 prioritized Buganizer bugs a week.',
-        'Monitored host servers for PCIe link status, OS image currency and drive capacity; deployed servers, switches and rack cabling for the fleet.',
-        'Set up macOS hosts for iOS testing with a remote iPhone control workflow alongside ACID, the Android device interaction platform.'],
-      skills: ['python', 'ai', 'wifi', 'ci', 'hostmon', 'rca', 'reports', 'racks', 'logs'] },
+    { id: 'bayside', co: 'Google', via: 'via Bayside Solutions', title: 'DevOps Consultant', loc: 'Mountain View, CA', yrs: '2025–26', months: 15, ssid: 'Google-OmniLab-5G', band: '5 GHz',
+      bullets: ['Built OmniLab, a ~5,000-device Google test lab, from bare metal to a production network: racks, switches, power and network redundancy, structured cabling and server deployment.',
+        'Installed server components, imaged hosts with PXE and USB, ran the device-imaging servers, and subnetted the lab to connect servers and devices.',
+        'Administered Debian hosts (systemctl, apt, cron, lsmod, dmesg), provisioned them with Ansible, tested kernel releases, and managed Dell firmware through iDRAC.',
+        'Built a Python lab-health system that classifies every host and device as OK, degraded or failed, auto-recovers failures, and files ~30 prioritized bugs a week.',
+        'Automated a daily lab-health report (PCIe links, OS images, drive capacity), saving ~10 hours of manual triage a week.',
+        'Scaled lab capacity for the Android Messages, Pixel Watch and cellular testing teams, and built remote iOS device control on macOS hosts.'],
+      skills: ['racks', 'cabling', 'linux', 'docker', 'python', 'ai', 'hostmon', 'reports', 'vlan', 'rca'] },
     { id: 'devsup', co: 'Google', via: 'via Accenture', title: 'Developer Technical Support SME', loc: 'Mountain View, CA', yrs: '2023–25', months: 17, ssid: 'Google-Play-Partners', band: '5 GHz',
-      bullets: ['Handled 300+ technical support tickets for dozens of developer partners integrating apps with Google Play.',
-        'Diagnosed root causes by reviewing Java, Kotlin and JavaScript code, SDK/API integrations and system logs.',
-        'Investigated edge-case crashes with Android Studio, ADB and log analysis; resolved Play Billing subscription and purchase issues.'],
-      skills: ['tickets', 'rca', 'logs', 'adb', 'android', 'kotlin'] },
-    { id: 'apple', co: 'Apple', via: 'via Accenture', title: 'Wireless Test Engineer (Bluetooth)', loc: 'Cupertino, CA', yrs: '2023', months: 9, ssid: 'Apple-BT-Interop', band: '2.4 GHz',
-      bullets: ['Ran Bluetooth interoperability testing (HFP, A2DP, AVRCP) against infotainment systems from nearly every major automotive OEM, from Kia to Ferrari.',
-        'Wrote Python automation to validate Bluetooth compatibility across platforms.',
-        'Tested Wi-Fi performance and deployment scenarios using RF signal chambers and PoE access points.',
-        'Analyzed device logs and packet traces to isolate Bluetooth stack issues and regressions.'],
-      skills: ['bluetooth', 'wifi', 'rf', 'python', 'logs', 'android', 'testplans'] },
+      bullets: ['Served as subject-matter expert for strategic Google Play partners, including Roku, Meta and Microsoft, handling ~40 escalated tickets a week with a 3-hour response time.',
+        'Closed 95% of tickets without engineering escalation by tracing root causes through partner code, SDK and API integrations, and logs.',
+        'Resolved Play Billing, Google API connectivity and authentication, crash and policy issues in Kotlin and Java apps with Android Studio, ADB and Firebase.',
+        'Wrote knowledge-base articles and team documentation on new API, SDK and Kotlin integrations.'],
+      skills: ['tickets', 'rca', 'logs', 'adb', 'android', 'kotlin', 'docs'] },
+    { id: 'apple', co: 'Apple', via: 'via Accenture', title: 'QA Test Engineer', loc: 'Cupertino, CA', yrs: '2023', months: 9, ssid: 'Apple-BT-Interop', band: '2.4 GHz',
+      bullets: ['Ran ~50 Bluetooth interoperability test cases per cycle (HFP, A2DP, AVRCP) against infotainment head units from every major automaker, from Kia to Ferrari.',
+        'Tested CarPlay head-unit integration and isolated whether failures came from the phone, the head unit or the vehicle side, including its CAN bus link.',
+        'Tested Wi-Fi performance in RF chambers with PoE access points, updating iOS firmware before each test cycle.'],
+      skills: ['bluetooth', 'wifi', 'rf', 'firmware', 'logs', 'testplans'] },
     { id: 'youtube', co: 'YouTube', via: 'via Accenture', title: 'QA Test Engineer', loc: 'Remote', yrs: '2022–23', months: 10, ssid: 'YouTube-SmartHome', band: '5 GHz',
-      bullets: ['Designed and executed test cases for smart home devices hosting YouTube Music, plus playback, Shorts and gaming features.',
-        'Built automated pipelines that ran regression testing on every nightly build.',
-        'Ran manual and automated testing (TUT, FIT, SIT, UAT) across Android and iOS; used YAML for test orchestration and Linux for deployment and logging.'],
-      skills: ['ci', 'yaml', 'linux', 'android', 'adb', 'testplans'] },
-    { id: 'fitbit', co: 'Fitbit', via: 'via TEKsystems', title: 'Firmware & Device Test Engineer', loc: 'Remote', yrs: '2021–22', months: 9, ssid: 'Fitbit-WearOS', band: '2.4 GHz',
-      bullets: ['Led QA testing for Fitbit Wear OS devices, focusing on firmware validation, SmartTrack and feature testing.', 'Wrote test plans and ran sprint-aligned QA in an Agile team.', 'Debugged data-collection and connectivity issues with Linux tools.'],
-      skills: ['firmware', 'bluetooth', 'testplans', 'linux', 'android'] },
-    { id: 'chromeos', co: 'Google', via: 'Chrome OS · via Tezerakt', title: 'Wi-Fi & Hardware Test Engineer', loc: 'Mountain View, CA', yrs: '2020–21', months: 12, ssid: 'ChromeOS-RF-Chamber', band: '6 GHz',
-      bullets: ['Supported Chromebook development through EVT, DVT and PVT, focusing on Wi-Fi functionality and peripheral device testing.', 'Built and maintained 500+ automated testbeds for Wi-Fi, cellular, camera, audio and peripheral testing.',
-        'Soldered and validated OTA and conductive Wi-Fi RF test setups.', 'Designed a 4-shelf camera testbed that doubled capacity from 8 to 16 devices per rack, then built 25 copies.', 'Automated device bring-up, OS/firmware updates and connectivity tests with Bash and Python.'],
-      skills: ['wifi', 'rf', 'testbeds', 'evt', 'python', 'bash', 'tcpip', 'firmware', 'cpp'] },
-    { id: 'stadia', co: 'Google', via: 'Stadia · via Embedded Resource Group', title: 'Wireless Device Test Engineer (Wi-Fi/BT)', loc: 'Mountain View, CA', yrs: '2019–20', months: 18, ssid: 'Stadia-Controllers', band: '5 GHz',
-      bullets: ['Flashed and validated firmware on 1,000+ Stadia Wi-Fi/BT controllers and Chromecast devices, verifying pairing, connectivity, input and update behavior.', 'Built and managed server labs for GPU video encoding and UXR dogfood testing; installed servers and applied BIOS and firmware updates.',
-        'Set up lab networks (Ethernet port traces, VLANs, switches, emulation routers) with NetOps.', 'Documented network topologies and server data sheets (IP, owner, purpose, location).'],
-      skills: ['wifi', 'bluetooth', 'firmware', 'vlan', 'racks', 'python', 'docs'] },
+      bullets: ['Tested YouTube experiences across smart displays (Amazon Echo), Android, ChromeOS, iPhone, Apple Watch, and Pixel and Fitbit watches.',
+        'Designed and ran device test cases with ADB across TUT, FIT, SIT and UAT stages.'],
+      skills: ['adb', 'android', 'testplans'] },
+    { id: 'fitbit', co: 'Fitbit', via: 'via TEKsystems', title: 'QA Test Engineer', loc: 'Remote', yrs: '2021–22', months: 9, ssid: 'Fitbit-WearOS', band: '2.4 GHz',
+      bullets: ['Validated exercise-detection and fitness-tracking algorithms by running structured exercise data collections, analyzing results and presenting findings to engineering.', 'Updated device firmware before each validation run and wrote test plans within Agile sprints.'],
+      skills: ['firmware', 'testplans', 'linux', 'android'] },
+    { id: 'chromeos', co: 'Google', via: 'Chrome OS · via Tezerakt', title: 'HW Test Engineer, Chrome OS', loc: 'Mountain View, CA', yrs: '2020–21', months: 12, ssid: 'ChromeOS-RF-Chamber', band: '6 GHz',
+      bullets: ['Automated Chromebook bring-up with Python and Bash, driving servos to power-cycle, flash, reset and connect devices to Wi-Fi based on each device\'s state.', 'Built and maintained 500+ automated testbeds used by 3 labs through EVT, DVT and PVT.',
+        'Designed a 4-shelf camera testbed that doubled rack capacity from 8 to 16 devices, then built 25 production units.', 'Updated Chromebook firmware and soldered OTA and conductive Wi-Fi RF test hardware.'],
+      skills: ['wifi', 'rf', 'testbeds', 'evt', 'python', 'bash', 'tcpip', 'firmware'] },
+    { id: 'stadia', co: 'Google', via: 'Stadia · via Embedded Resource Group', title: 'Lab Administrator, Stadia', loc: 'Mountain View, CA', yrs: '2019–20', months: 18, ssid: 'Stadia-GPU-Lab', band: '5 GHz',
+      bullets: ['Ran GPU video-encoding and dogfood labs of 150+ servers and 300+ GPUs supporting a dozen-plus dogfood testers.', 'Installed and adapted GPUs for Dell servers, kept GPU drivers and firmware current, and updated server BIOS.',
+        'Verified firmware on 1,000+ Stadia controllers and Chromecast devices, and configured lab networks (VLANs, switches, emulation routers) with NetOps.'],
+      skills: ['racks', 'firmware', 'vlan', 'dc', 'docs'] },
     { id: 'aws', co: 'AWS', via: 'Amazon Web Services', title: 'Quality Assurance Technician', loc: 'San Jose, CA', yrs: '2019', months: 3, ssid: 'AWS-SFO-Cluster', band: 'wired',
-      bullets: ['Validated data center infrastructure for SFO clusters, ensuring encrypted traffic and hardware compliance.', 'Verified routing, fiber mapping and ToR connectivity with Unix CLI tools.'],
+      bullets: ['Validated ~12 racks a day across SFO data center clusters for encrypted traffic and hardware compliance, verifying routing, fiber mapping and ToR connectivity.', 'Troubleshot physical and data-link layer issues and upgraded servers and cabling.'],
       skills: ['fiber', 'dc', 'linux', 'tcpip', 'routing'] },
-    { id: 'cisco', co: 'Cisco', via: 'Cisco Systems · via Wipro', title: 'Network Lab Administrator', loc: 'San Jose, CA', yrs: '2018–19', months: 6, ssid: 'Cisco-Nexus-Lab', band: 'wired',
-      bullets: ['Managed UCS/Nexus 9K/7K test configurations with terminal and TFTP servers and Ixia traffic generators.', 'Implemented TCP/IP, OSPF, EIGRP, BGP, MPLS, OTV, vPC and FabricPath; gave Layer 1–3 support to network engineers.', 'Re-imaged network devices and scripted server provisioning.'],
+    { id: 'cisco', co: 'Cisco', via: 'Cisco Systems · via Wipro', title: 'Lab Administrator', loc: 'San Jose, CA', yrs: '2018–19', months: 6, ssid: 'Cisco-Nexus-Lab', band: 'wired',
+      bullets: ['Maintained 50+ QA testbeds built on UCS servers, Nexus 9K/7K switches, TFTP servers and Ixia traffic generators.', 'Wrote the provisioning script that imaged servers, applied network configuration and connected them to Ixia for traffic simulation.', 'Implemented OSPF, EIGRP, BGP, OTV, vPC and FabricPath and gave Layer 1–3 support to network engineers.'],
       skills: ['routing', 'tcpip', 'traffic', 'bash', 'racks'] },
     { id: 'broadcom', co: 'Broadcom', via: 'Broadcom Inc. · via EMR CPR', title: 'Lead Data Center Technician', loc: 'San Jose, CA', yrs: '2018', months: 6, ssid: 'Broadcom-DC-Migration', band: 'wired',
-      bullets: ['Led a data center migration team, tracking every rack and its equipment into a database across US sites.',
-        'Pulled and terminated CAT5/CAT6 to patch panels; ran 24/48-pair LC fiber between racks up to 150 feet apart.'],
+      bullets: ['Led 4 technicians in migrating 50+ racks across 3 sites, tracking every rack and its equipment in a database.',
+        'Terminated CAT5/CAT6 to patch panels, ran 24/48-pair LC fiber between racks, and QA\'d rack, power and KVM cabling.'],
       skills: ['dc', 'racks', 'cabling', 'fiber', 'docs'] },
   ];
   const roleById = id => ROLES.find(r => r.id === id);
@@ -845,14 +845,14 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
     r2: { t: 'Core router R2', d: 'The redundant path. Drop R1 and traffic reconverges through here.', b: ['Built redundant routed testbeds so failover could be tested on purpose, not discovered by accident.', 'Degrees in IS/IT with a concentration in network routing and switching.'], k: ['Failover', 'OSPF reconvergence', 'Redundancy'], r: ['cisco'] },
     sw: { t: 'Nexus 9K switch', d: 'Aggregation for APs, traffic generators and the automation host, with VLANs per test bed.', b: ['Built and maintained QA testbeds with Nexus 9K/7K switches and UCS servers.', 'Set up lab networks at Stadia: Ethernet port traces, VLANs, switch configs with NetOps.', 'Deployed servers, switches and rack cabling for a ~5,000-device lab at Google.'], k: ['Nexus 9K/7K', 'UCS', 'VLAN', 'vPC', 'Rack & stack'], r: ['cisco', 'stadia', 'bayside'] },
     gen: { t: 'iPerf / Ixia traffic generator', d: 'Pushes known traffic so throughput, latency and loss can be measured, not guessed.', b: ['Built Cisco testbeds around Ixia traffic generators.', 'Throughput testing with iPerf across Wi-Fi clients and access points.', 'Hit "Run iPerf" to push traffic to every client in the chamber.'], k: ['iPerf3', 'Ixia', 'TCP/UDP', 'Throughput', 'Latency'], r: ['cisco', 'chromeos'] },
-    ci: { t: 'Automation host', d: 'Python and Jenkins drive the lab: flash, configure, test, collect, report.', b: ['Python scripts flash devices at scale and batch-pull IMEI, phone numbers and Wi-Fi chipset properties.', 'AI-assisted monitoring auto-recovers devices and files ~30 prioritized bugs a week.', 'Nightly regression pipelines at YouTube; Bash/Python bring-up at Chrome OS.'], k: ['Python', 'Jenkins', 'Bash', 'YAML', 'ADB', 'Buganizer'], r: ['bayside', 'youtube', 'chromeos'] },
+    ci: { t: 'Automation host', d: 'Python and Jenkins drive the lab: flash, configure, test, collect, report.', b: ['Python scripts flash devices at scale and batch-pull IMEI, phone numbers and Wi-Fi chipset properties.', 'AI-assisted monitoring auto-recovers devices and files ~30 prioritized bugs a week.', 'Servo-driven Bash/Python bring-up at Chrome OS: power-cycle, flash, reset and connect devices automatically.'], k: ['Python', 'Ansible', 'Bash', 'PXE', 'ADB', 'Buganizer'], r: ['bayside', 'chromeos'] },
     ap1: { t: 'Access point 1 · 5 GHz', d: '802.11ax on channel 36, 80 MHz, WPA2/WPA3. Serves the phone and Chromebook.', b: ['Tested Wi-Fi performance and deployment scenarios with PoE access points at Apple.', 'Chromebook Wi-Fi functionality testing through EVT, DVT and PVT.'], k: ['802.11ax', 'PoE', 'WPA3', 'Roaming', 'Channel planning'], r: ['apple', 'chromeos'] },
     ap2: { t: 'Access point 2 · 6 GHz', d: 'Second cell for roaming and band tests. Serves the watch and controller.', b: ['Roam a client between APs to watch a fast-transition reassociation.', 'Firmware validation on 1,000+ Stadia Wi-Fi/BT controllers before they reached test teams.'], k: ['6 GHz', '802.11r', 'Band steering', 'Interop'], r: ['stadia', 'chromeos'] },
     sniff: { t: 'Wireless sniffer', d: 'An adapter in monitor mode captures frames over the air: beacons, auth, EAPOL, data.', b: ['Packet capture and analysis with Wireshark to root-cause connection and audio defects.', 'Start a capture, then scroll to the 802.11 section to step through a real join sequence.'], k: ['Wireshark', 'Monitor mode', 'Radiotap', 'EAPOL'], r: ['apple'] },
     phone: { t: 'Phone (DUT)', d: 'Android/iOS client in the RF chamber. Wi-Fi to AP-1, Bluetooth to the car head unit.', b: ['Bluetooth HFP, A2DP and AVRCP interop against nearly every major automotive OEM, Kia to Ferrari.', 'ADB, Android Studio and log analysis to isolate stack issues.'], k: ['Android', 'iOS', 'ADB', 'HFP/A2DP/AVRCP'], r: ['apple', 'devsup'] },
     cb: { t: 'Chromebook (DUT)', d: 'Pre-production laptop under Wi-Fi and peripheral test. Try roaming it between APs.', b: ['Built 500+ automated testbeds for Wi-Fi, cellular, camera, audio and peripherals.', 'Soldered and validated OTA and conductive Wi-Fi RF test setups.'], k: ['EVT/DVT/PVT', 'OTA', 'Conductive RF', 'Testbeds'], r: ['chromeos'] },
     watch: { t: 'Watch (DUT)', d: 'Wear OS wearable: firmware, connectivity and data integrity.', b: ['Led QA for Fitbit Wear OS devices with a focus on firmware validation and SmartTrack.', 'Kept smartwatches healthy in the ~5,000-device Google lab.'], k: ['Wear OS', 'Firmware', 'BLE'], r: ['fitbit', 'bayside'] },
-    ctl: { t: 'Game controller (DUT)', d: 'A Wi-Fi/BT controller that talks straight to the cloud.', b: ['Verified firmware on 1,000+ Stadia controllers and Chromecast devices shipped worldwide.', 'Automated controller readiness validation with Python.'], k: ['Firmware', 'Pairing', 'Wi-Fi/BT'], r: ['stadia'] },
+    ctl: { t: 'Game controller (DUT)', d: 'A Wi-Fi/BT controller that talks straight to the cloud.', b: ['Verified firmware on 1,000+ Stadia controllers and Chromecast devices shipped worldwide.', 'Configured the lab networks behind 150+ GPU servers for Stadia dogfood testing.'], k: ['Firmware', 'Pairing', 'Wi-Fi/BT'], r: ['stadia'] },
     car: { t: 'Car head unit', d: 'Bluetooth peer for hands-free calling and media.', b: ['HFP call setup, A2DP audio streaming and AVRCP control tested against OEMs from Kia to Ferrari.'], k: ['HFP', 'A2DP', 'AVRCP', 'Interop'], r: ['apple'] },
   };
   const WIRES = [['wan', 'r1', 'fiber'], ['wan', 'r2', 'fiber'], ['r1', 'r2', 'wire'], ['r1', 'sw', 'wire'], ['r2', 'sw', 'wire'], ['sw', 'gen', 'wire'], ['ci', 'sw', 'mgmt'], ['sw', 'ap1', 'wire'], ['sw', 'ap2', 'wire'], ['phone', 'car', 'bt']];
@@ -1116,11 +1116,11 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
       bullets: ['Built QA testbeds on Nexus 9K/7K switches, UCS servers, terminal/TFTP servers and Ixia traffic generators.', 'Implemented OSPF, EIGRP, BGP, MPLS, OTV, vPC and FabricPath; Layer 1–3 support.', 'Verified routing, fiber mapping and ToR connectivity for AWS SFO clusters.', 'Set up lab networks with VLANs, switch configs and emulation routers.'],
       kit: ['Nexus 9K/7K', 'OSPF', 'BGP', 'MPLS', 'VLAN', 'Ixia', 'CCNA'], roles: ['cisco', 'aws', 'stadia'] },
     { k: 'L4+', name: 'Compute & cloud', tag: 'Servers, hosts, images', color: '--ok', sub: 'Google Stadia · Google (Bayside) · Cisco',
-      bullets: ['Built and ran GPU server labs: installs, BIOS and firmware updates, hardware diagnostics.', 'Monitored host servers for PCIe link health, OS image currency and drive capacity.', 'Hands-on with Docker, Kubernetes, AWS and Linux.'],
-      kit: ['UCS', 'BIOS/FW', 'Linux', 'Docker', 'Kubernetes', 'AWS'], roles: ['stadia', 'bayside', 'cisco'] },
+      bullets: ['Ran GPU labs of 150+ servers and 300+ GPUs: installs, GPU drivers, BIOS and firmware updates.', 'Imaged Debian hosts with PXE and USB, configured GRUB and BIOS/UEFI, and provisioned with Ansible.', 'Monitored host servers for PCIe link health, OS image currency and drive capacity; hands-on with Docker and Kubernetes.'],
+      kit: ['Linux', 'PXE', 'Ansible', 'GPU servers', 'iDRAC', 'Docker', 'Kubernetes'], roles: ['stadia', 'bayside', 'cisco'] },
     { k: 'L7', name: 'Automation & AI', tag: 'Python, CI, AI monitoring', color: '--accent', sub: 'Google (Bayside) · Google Chrome OS · YouTube · Apple',
-      bullets: ['Python frameworks built from scratch: flash devices at scale, batch-pull IMEI and Wi-Fi chipset data.', 'AI-assisted monitoring for ~5,000 devices that auto-recovers failures and files ~30 prioritized bugs a week.', 'Nightly regression pipelines at YouTube; Python Bluetooth automation at Apple.'],
-      kit: ['Python', 'Bash', 'Jenkins', 'YAML', 'SQL', 'AI monitoring'], roles: ['bayside', 'chromeos', 'youtube', 'apple'] },
+      bullets: ['Python frameworks built from scratch: flash devices at scale, batch-pull IMEI and Wi-Fi chipset data.', 'AI-assisted monitoring for ~5,000 devices that auto-recovers failures and files ~30 prioritized bugs a week.', 'Servo-driven bring-up automation at Chrome OS and the provisioning script behind Cisco\'s Ixia testbeds.'],
+      kit: ['Python', 'Bash', 'Ansible', 'YAML', 'AI monitoring'], roles: ['bayside', 'chromeos', 'cisco'] },
   ];
   const layersEl = $('#layers'), lp = $('#layer-panel'); let layer = 1;
   LAYERS.forEach((L, i) => {
