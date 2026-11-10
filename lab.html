@@ -552,7 +552,7 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
     ap: { x: 20, y: 260, w: 190, h: 64, tag: 'ACCESS POINT', s: 'Wi-Fi 6 · PoE', c: '#a596ff', go: '#atten',
       t: 'Access point', d: 'The real network the device joins. Cabled through the attenuator so the link budget is controlled, not left to the room.', u: 'Wi-Fi testing with PoE access points in RF chambers at Apple.' },
     ch: { x: 520, y: 110, w: 220, h: 250, tag: 'SHIELDED CHAMBER', s: '', c: '#a596ff', go: '#atten',
-      t: 'RF shielded chamber', d: 'A metal box that blocks outside signals, so results are repeatable. Inside: the device under test, an antenna, and a servo or USB link for remote control.', u: 'RF chambers at Apple and Chrome OS; built RF-isolated chambers and shielded racks for Roku, RDK and Chromecast at Google OmniLab.' },
+      t: 'RF shielded chamber', d: 'A metal box that blocks outside signals, so results are repeatable. Inside: the device under test, an antenna, and a servo board cabled to the device debug header or USB-C. The servo power-cycles, resets and flashes the device, and the automation host drives the servo over USB or LAN.', u: 'RF chambers at Apple and Chrome OS; built RF-isolated chambers and shielded racks for Roku, RDK and Chromecast at Google OmniLab.' },
     sa: { x: 280, y: 380, w: 170, h: 64, tag: 'SPECTRUM ANALYZER', s: 'what is on the air', c: '#3fe0ea', go: '#spectrum',
       t: 'Spectrum analyzer', d: 'Measures power versus frequency coming out of the chamber: transmit power, interference and coexistence problems.', u: null },
     vna: { x: 20, y: 380, w: 190, h: 64, tag: 'VNA', s: 'characterizes the path', c: '#3fe0ea', go: '#vna',
@@ -565,7 +565,7 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
     { p: 'M210 172 H280', k: 'rf' }, { p: 'M450 172 H520', k: 'rf' }, { p: 'M210 292 H245 V172', k: 'rf' },
     { p: 'M520 330 H485 V412 H450', k: 'rf' }, { p: 'M210 412 H245 V330 H520', k: 'rfd' },
     { p: 'M115 84 V140', k: 'ctl' }, { p: 'M210 52 H260 V156 H280', k: 'ctl' }, { p: 'M210 40 H280', k: 'ctl' },
-    { p: 'M450 52 H630 V110', k: 'ctl' }, { p: 'M60 84 V110 H8 V412 H20', k: 'ctl' }, { p: 'M150 84 V110 H240 V396 H280', k: 'ctl' },
+    { p: 'M60 84 V110 H8 V412 H20', k: 'ctl' }, { p: 'M150 84 V110 H240 V396 H280', k: 'ctl' },
   ];
   const linkColor = { rf: '#3fe0ea', rfd: '#3fe0ea', ctl: '#ffb37a' };
   LINKS.forEach(L => {
@@ -590,6 +590,13 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
   }
   S('rect', { x: dutX - 26, y: dutY + 40, width: 52, height: 16, rx: 3, fill: '#101b23', stroke: '#ffb37a', 'stroke-opacity': .6 }, chG);
   S('text', { x: dutX, y: dutY + 52, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono, monospace', 'font-size': 9.5, fill: '#ffb37a' }, chG).textContent = 'servo';
+  // servo <-> DUT: debug header / USB-C (power, reset, flash)
+  S('path', { d: `M${dutX} ${dutY + 40} V${dutY + 22}`, stroke: '#ffb37a', 'stroke-width': 2 }, chG);
+  S('text', { x: dutX + 6, y: dutY + 34, 'font-family': 'JetBrains Mono, monospace', 'font-size': 8.5, fill: '#ffb37a', 'fill-opacity': .8 }, chG).textContent = 'debug/USB-C';
+  // servo -> automation host: USB / LAN control
+  const servoCtl = `M${dutX + 26} ${dutY + 48} H750 V8 H115 V20`;
+  S('path', { d: servoCtl, fill: 'none', stroke: '#ffb37a', 'stroke-opacity': .55, 'stroke-width': 1.2, 'stroke-dasharray': '2 4' }, chG);
+  if (!reduce) { const cd = S('circle', { r: 2.6, fill: '#ffb37a' }, chG); S('animateMotion', { dur: '4s', repeatCount: 'indefinite', path: servoCtl }, cd); }
   let selB = null;
   Object.entries(BN).forEach(([id, n]) => {
     const g = S('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': n.t, style: `--c:${n.c}` }, bsvg);
