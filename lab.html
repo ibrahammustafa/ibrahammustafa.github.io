@@ -250,6 +250,7 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
         <div class="legend-row">
           <span><i style="background:#3fe0ea"></i>RF path (coax)</span>
           <span><i style="background:#ffb37a"></i>Control (LAN / USB / SCPI)</span>
+          <span><i style="background:#6fdc9c"></i>Ethernet data (Ixia)</span>
           <span><i style="background:#a596ff"></i>Over the air</span>
         </div>
       </div>
@@ -557,12 +558,14 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
       t: 'Spectrum analyzer', d: 'Measures power versus frequency coming out of the chamber: transmit power, interference and coexistence problems.', u: null },
     vna: { x: 20, y: 380, w: 190, h: 64, tag: 'VNA', s: 'characterizes the path', c: '#3fe0ea', go: '#vna',
       t: 'Vector network analyzer', d: 'Sweeps cables, connectors and antennas to measure loss and reflection. It verifies the bench before the bench verifies the device.', u: null },
-    ix: { x: 280, y: 20, w: 170, h: 64, tag: 'IXIA', s: 'line-rate traffic', c: '#ffb37a', go: '#ixia',
-      t: 'Ixia traffic generator', d: 'Generates and measures network traffic in hardware, so the wired side of the network can be loaded and validated.', u: 'Deployed Ixia traffic generators across Cisco test networks to validate switches and routers.' },
+    ix: { x: 280, y: 20, w: 170, h: 64, tag: 'IXIA', s: 'frames → switch → AP', c: '#6fdc9c', go: '#ixia',
+      t: 'Ixia traffic generator', d: 'Follow the green packets. Ixia builds Ethernet frames in hardware and sends them through the switch to the access point. The AP turns them into 802.11 frames that travel over the attenuated RF path to the device in the chamber. An endpoint on the device sends traffic back the same way, so Ixia measures throughput, loss and latency end to end. The Ixia section below shows what is inside each frame.', u: 'Deployed Ixia traffic generators across Cisco test networks to validate switches and routers.' },
+    sw: { x: 280, y: 240, w: 170, h: 52, tag: 'SWITCH', s: 'VLAN · PoE to the AP', c: '#6fdc9c', go: '#ixia',
+      t: 'Network switch', d: 'Carries Ixia traffic to the access point on a test VLAN and powers the AP over PoE. In network validation the switch itself becomes the device under test, and Ixia measures how it forwards under load.', u: 'Cisco: switch and router testbeds validated with Ixia traffic.' },
   };
   const center = n => [n.x + n.w / 2, n.y + n.h / 2];
   const LINKS = [
-    { p: 'M210 172 H280', k: 'rf' }, { p: 'M450 172 H520', k: 'rf' }, { p: 'M210 292 H245 V172', k: 'rf' },
+    { p: 'M210 172 H280', k: 'rf' }, { p: 'M450 172 H520', k: 'rf' }, { p: 'M210 306 H245 V172', k: 'rf' },
     { p: 'M520 330 H485 V412 H450', k: 'rf' }, { p: 'M210 412 H245 V330 H520', k: 'rfd' },
     { p: 'M115 84 V140', k: 'ctl' }, { p: 'M210 52 H260 V156 H280', k: 'ctl' }, { p: 'M210 40 H280', k: 'ctl' },
     { p: 'M60 84 V110 H8 V412 H20', k: 'ctl' }, { p: 'M150 84 V110 H240 V396 H280', k: 'ctl' },
@@ -575,6 +578,20 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
       S('animateMotion', { dur: (2.2 + Math.random()).toFixed(2) + 's', repeatCount: 'indefinite', path: L.p }, dot);
     }
   });
+  // Ixia data path: Ixia -> switch -> AP (Ethernet), downlink + uplink packets
+  const DATA = ['M450 52 H472 V266 H450', 'M280 266 H210'];
+  DATA.forEach((d, i) => {
+    S('path', { d, fill: 'none', stroke: '#6fdc9c', 'stroke-opacity': .6, 'stroke-width': 2 }, bsvg);
+    if (reduce) return;
+    for (let k = 0; k < 3; k++) {
+      const pk = S('rect', { x: -5, y: -3, width: 10, height: 6, rx: 1.5, fill: '#6fdc9c' }, bsvg);
+      S('animateMotion', { dur: i ? '1.4s' : '2.6s', begin: (k * (i ? .47 : .87)) + 's', repeatCount: 'indefinite', path: d, rotate: 'auto' }, pk);
+    }
+    const up = S('rect', { x: -4, y: -2.5, width: 8, height: 5, rx: 1.5, fill: '#6fdc9c', 'fill-opacity': .45 }, bsvg);
+    S('animateMotion', { dur: i ? '1.4s' : '2.6s', repeatCount: 'indefinite', path: d, rotate: 'auto', keyPoints: '1;0', keyTimes: '0;1', calcMode: 'linear' }, up);
+  });
+  const dl = S('text', { x: 476, y: 230, 'font-family': 'JetBrains Mono, monospace', 'font-size': 8.5, fill: '#6fdc9c' }, bsvg); dl.textContent = 'Ethernet';
+  const dl2 = S('text', { x: 214, y: 258, 'font-family': 'JetBrains Mono, monospace', 'font-size': 9.5, fill: '#6fdc9c' }, bsvg); dl2.textContent = 'to AP';
   // chamber interior
   const chG = S("g", { "pointer-events": "none" }, bsvg);
   const ch = BN.ch;
@@ -588,6 +605,7 @@ footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wr
     S('animate', { attributeName: 'r', from: 6, to: 90, dur: '2.4s', begin: (i * .8) + 's', repeatCount: 'indefinite' }, c);
     S('animate', { attributeName: 'opacity', from: .8, to: 0, dur: '2.4s', begin: (i * .8) + 's', repeatCount: 'indefinite' }, c);
   }
+  S('text', { x: ch.x + 14, y: ch.y + 50, 'font-family': 'JetBrains Mono, monospace', 'font-size': 9.5, fill: '#a596ff' }, chG).textContent = 'AP → DUT: 802.11 frames over the air';
   S('rect', { x: dutX - 26, y: dutY + 40, width: 52, height: 16, rx: 3, fill: '#101b23', stroke: '#ffb37a', 'stroke-opacity': .6 }, chG);
   S('text', { x: dutX, y: dutY + 52, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono, monospace', 'font-size': 9.5, fill: '#ffb37a' }, chG).textContent = 'servo';
   // servo <-> DUT: debug header / USB-C (power, reset, flash)
