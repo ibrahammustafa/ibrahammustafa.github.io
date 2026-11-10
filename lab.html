@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive RF and traffic test bench by Ibraham Mustafa: signal generator, spectrum analyzer, VNA, programmable attenuators, Ixia traffic generation and CI/CD for test labs.">
+<meta name="theme-color" content="#0b1218">
+<title>RF Bench · Ibraham Mustafa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Concept: an RF test bench you can operate. Every instrument is a live, simulated screen.
+   Instrument screens stay dark in both themes, the way real bench gear does. */
+:root {
+  --bg: #e9eef2; --bg-2: #dfe6ec; --panel: #f7f9fb; --steel: #1d2a34; --steel-2: #2a3a46; --deep: #0b1218;
+  --ink: #15202a; --muted: #55636f; --line: #c8d2da;
+  --accent: #d9601a; --accent-ink: #ffffff; --sig: #0a8f9c; --sig-ink: #ffffff; --bt: #6d5bd0; --link: #1f5fa8;
+  --ok: #2f9e5b; --warn: #c98f0c; --bad: #d23b3b; --fix: #2f7fd6;
+  --unit-text: #e4ecf1; --unit-muted: #9fb0bd;
+  --scr: #060b10; --scr-grid: #15222c; --scr-line: #24333f;
+  --font-display: "Saira Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  --ease: cubic-bezier(.2,.8,.2,1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b1218; --bg-2: #0f1820; --panel: #131e27; --steel: #0e171e; --steel-2: #1a2732; --deep: #060a0e;
+  --ink: #dce6ec; --muted: #8fa0ad; --line: #233340;
+  --accent: #ff8a3d; --accent-ink: #1a0e05; --sig: #3fe0ea; --sig-ink: #04181a; --bt: #a596ff; --link: #7fb4f0;
+  --ok: #3fc275; --warn: #f0bc3a; --bad: #ff5d5d; --fix: #5aa6ff; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0b1218; --bg-2: #0f1820; --panel: #131e27; --steel: #0e171e; --steel-2: #1a2732; --deep: #060a0e;
+  --ink: #dce6ec; --muted: #8fa0ad; --line: #233340;
+  --accent: #ff8a3d; --accent-ink: #1a0e05; --sig: #3fe0ea; --sig-ink: #04181a; --bt: #a596ff; --link: #7fb4f0;
+  --ok: #3fc275; --warn: #f0bc3a; --bad: #ff5d5d; --fix: #5aa6ff; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; overflow-x: hidden; }
+[hidden] { display: none !important; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--link); }
+h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--sig); }
+.mono { font-family: var(--font-mono); }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
+
+/* header */
+.progress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--sig), var(--accent)); z-index: 30; }
+header.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(10px) saturate(1.2); -webkit-backdrop-filter: blur(10px) saturate(1.2); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.top .wrap { display: flex; align-items: center; gap: 14px; padding-block: 10px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: .02em; text-decoration: none; color: var(--ink); white-space: nowrap; }
+.brand span { color: var(--sig); }
+.back { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.back:hover { color: var(--ink); }
+nav.secnav { display: flex; gap: 2px; margin-left: auto; font-family: var(--font-mono); font-size: 12.5px; }
+nav.secnav a { color: var(--muted); text-decoration: none; padding: 6px 8px; border-radius: 6px; transition: color .2s, background .2s; }
+nav.secnav a:hover, nav.secnav a.on { color: var(--ink); background: color-mix(in srgb, var(--sig) 14%, transparent); }
+.theme-btn { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.theme-btn svg { width: 16px; height: 16px; }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 15px; transition: box-shadow .2s, transform .2s var(--ease); }
+.btn:hover { box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--ink) 70%, transparent); transform: translateY(-1px); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.sig { background: var(--sig); border-color: var(--sig); color: var(--sig-ink); }
+
+/* reveal */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; }
+
+section { padding-block: 64px 8px; scroll-margin-top: 64px; }
+.sec-head { margin-bottom: 22px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: end; }
+.sec-head h2 { font-size: clamp(34px, 4.6vw, 56px); text-transform: uppercase; line-height: .95; }
+.sec-head p { color: var(--muted); max-width: 64ch; margin: 8px 0 0; }
+.num { font-family: var(--font-display); font-weight: 800; font-size: clamp(54px, 8vw, 96px); line-height: .8; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--sig) 60%, transparent); user-select: none; }
+
+/* hero */
+.hero { padding-block: 44px 10px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 36px; align-items: center; }
+.hero h1 { font-size: clamp(48px, 7.4vw, 100px); line-height: .88; font-weight: 800; text-transform: uppercase; }
+.hero h1 em { font-style: normal; color: var(--sig); }
+.hero .lede { font-size: 18px; color: var(--muted); max-width: 52ch; margin: 18px 0 20px; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.legend-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.legend-row i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+
+/* the bench diagram */
+.bench { background: var(--steel); border-radius: 14px; padding: 12px; position: relative; overflow: hidden; border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); box-shadow: 0 30px 60px -30px rgba(5,12,18,.65); }
+.bench svg { width: 100%; height: auto; display: block; }
+.bench .node { cursor: pointer; }
+.bench .node rect.box { fill: #101b23; stroke: #2f4250; stroke-width: 1.2; transition: stroke .2s, fill .2s; }
+.bench .node:hover rect.box, .bench .node.sel rect.box { stroke: var(--c, #3fe0ea); fill: #13222c; }
+.bench .node text { font-family: var(--font-mono); fill: #dce6ec; font-size: 13px; pointer-events: none; }
+.bench .node text.s { fill: #8fa0ad; font-size: 10.5px; }
+.bench .node .tag { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: .04em; }
+.bench .node:focus-visible rect.box { stroke: #fff; stroke-width: 2; }
+.bench-info { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 12px; min-height: 148px; }
+.bench-info h3 { font-size: 26px; text-transform: uppercase; }
+.bench-info p { margin: 6px 0; color: var(--muted); }
+.bench-info .used { font-size: 14px; color: var(--ink); border-left: 3px solid var(--sig); padding-left: 10px; margin-top: 10px; }
+.bench-info .go { font-family: var(--font-mono); font-size: 12.5px; }
+
+/* instrument chassis */
+.inst { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 16px; align-items: start; }
+.chassis { background: linear-gradient(180deg, #24333f, #18232c); border-radius: 14px; padding: 12px; border: 1px solid #33474f; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 30px 60px -34px rgba(5,12,18,.7); min-width: 0; color: var(--unit-text); }
+.chassis-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 2px 4px 10px; font-family: var(--font-mono); font-size: 11.5px; color: #9fb0bd; letter-spacing: .08em; text-transform: uppercase; flex-wrap: wrap; }
+.chassis-top b { font-family: var(--font-display); font-size: 18px; color: #e4ecf1; letter-spacing: .06em; }
+.chassis-top .rd { display: inline-flex; align-items: center; gap: 6px; }
+.chassis-top .rd i { width: 7px; height: 7px; border-radius: 50%; background: #3fc275; box-shadow: 0 0 8px #3fc275; }
+.screen { background: var(--scr); border-radius: 8px; border: 1px solid #000; box-shadow: inset 0 0 0 1px #1c2a34, inset 0 0 40px rgba(63,224,234,.05); position: relative; overflow: hidden; }
+.screen canvas { display: block; width: 100%; }
+.screen .ro { position: absolute; top: 8px; left: 10px; right: 10px; display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-mono); font-size: 11.5px; color: #8fa0ad; pointer-events: none; flex-wrap: wrap; }
+.screen .ro b { color: #3fe0ea; font-weight: 600; }
+.knobs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 14px; padding: 12px 4px 4px; }
+.knob { display: flex; flex-direction: column; gap: 4px; font-family: var(--font-mono); font-size: 11.5px; color: #9fb0bd; min-width: 0; }
+.knob output { color: #e4ecf1; font-size: 13px; }
+.knob .lab { display: flex; justify-content: space-between; gap: 6px; }
+input[type=range] { width: 100%; accent-color: #3fe0ea; }
+select { background: #0d161d; border: 1px solid #3c4f5d; border-radius: 5px; padding: 6px 8px; color: #e4ecf1; font-family: var(--font-mono); font-size: 12px; }
+.keys { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 4px 2px; }
+.ctl { background: transparent; color: var(--unit-text); border: 1px solid #3c4f5d; border-radius: 5px; padding: 7px 11px; font-family: var(--font-mono); font-size: 12px; transition: border-color .2s, background .2s, color .2s; display: inline-flex; align-items: center; gap: 7px; }
+.ctl:hover { border-color: #3fe0ea; color: #fff; }
+.ctl[aria-pressed="true"] { background: rgba(63,224,234,.18); border-color: #3fe0ea; color: #fff; }
+.ctl.go { background: #3fe0ea; color: #04181a; border-color: #3fe0ea; font-weight: 600; }
+.ctl.go:disabled { opacity: .55; cursor: progress; }
+.ctl .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dc, currentColor); }
+.scpi { background: #070c10; border: 1px solid #1f2d37; border-radius: 8px; margin-top: 10px; padding: 10px 12px; height: 132px; overflow: auto; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.6; color: #9fb0bd; }
+.scpi div { white-space: pre-wrap; word-break: break-word; }
+.scpi .k { color: #ffb37a; } .scpi .g { color: #6fdc9c; } .scpi .c { color: #5f7484; } .scpi .w { color: #f0bc3a; } .scpi .b { color: #ff7a7a; }
+
+/* side explainer */
+.explain { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.card h3 { font-size: 21px; text-transform: uppercase; margin-bottom: 4px; }
+.card p { margin: 6px 0; color: var(--muted); font-size: 15px; }
+.card ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 14.5px; }
+.card li { margin: 3px 0; }
+.card.used { border-left: 3px solid var(--sig); }
+.card.used h3 { color: var(--sig); font-size: 17px; letter-spacing: .06em; }
+.card.used p { color: var(--ink); }
+.kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.kpi b { font-family: var(--font-display); font-size: 28px; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+.kpi span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.kpi.good b { color: var(--ok); } .kpi.bad b { color: var(--bad); } .kpi.warn b { color: var(--warn); }
+.verdict { font-family: var(--font-mono); font-size: 13px; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); }
+.verdict.pass { border-color: color-mix(in srgb, var(--ok) 50%, transparent); color: var(--ok); }
+.verdict.fail { border-color: color-mix(in srgb, var(--bad) 50%, transparent); color: var(--bad); }
+
+/* attenuator schematic */
+.att-sch { width: 100%; height: auto; display: block; margin-bottom: 8px; }
+.att-sch text { font-family: var(--font-mono); font-size: 12px; fill: #dce6ec; }
+.att-sch .s { fill: #8fa0ad; font-size: 10.5px; }
+
+/* ixia */
+.pkt { display: flex; border-radius: 6px; overflow: hidden; border: 1px solid #2f4250; margin-top: 10px; font-family: var(--font-mono); font-size: 11px; }
+.pkt button { border: 0; border-right: 1px solid #0b1218; padding: 9px 6px; color: #04181a; font-weight: 600; text-align: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: filter .2s, transform .2s; }
+.pkt button:last-child { border-right: 0; }
+.pkt button:hover, .pkt button[aria-pressed="true"] { filter: brightness(1.18); }
+.pkt button[aria-pressed="true"] { box-shadow: inset 0 -3px 0 #fff; }
+.pkt-info { font-family: var(--font-mono); font-size: 12px; color: #c4d2dc; min-height: 40px; margin-top: 8px; line-height: 1.55; }
+table.stats { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; margin-top: 10px; font-variant-numeric: tabular-nums; }
+table.stats th, table.stats td { text-align: right; padding: 5px 8px; border-bottom: 1px solid #22313c; white-space: nowrap; }
+table.stats th { color: #8fa0ad; font-weight: 400; text-transform: uppercase; font-size: 10.5px; letter-spacing: .06em; }
+table.stats td:first-child, table.stats th:first-child { text-align: left; }
+table.stats .bad { color: #ff7a7a; } table.stats .good { color: #6fdc9c; }
+.tscroll { overflow-x: auto; }
+
+/* pipeline */
+.pipe { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; margin-top: 4px; position: relative; }
+.stg { position: relative; padding: 14px 12px 12px; border: 1px solid var(--line); background: var(--panel); margin-right: -1px; min-width: 0; transition: background .3s, border-color .3s; }
+.stg:first-child { border-radius: 10px 0 0 10px; } .stg:last-child { border-radius: 0 10px 10px 0; margin-right: 0; }
+.stg .n { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.stg h4 { font-size: 21px; text-transform: uppercase; margin: 2px 0 2px; }
+.stg p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.stg .st { position: absolute; top: 12px; right: 12px; width: 12px; height: 12px; border-radius: 50%; background: var(--line); }
+.stg.run { background: color-mix(in srgb, var(--fix) 10%, var(--panel)); border-color: color-mix(in srgb, var(--fix) 55%, var(--line)); z-index: 1; }
+.stg.run .st { background: var(--fix); animation: blinkp .8s ease-in-out infinite; }
+.stg.ok .st { background: var(--ok); } .stg.fail .st { background: var(--bad); }
+.stg.fail { background: color-mix(in srgb, var(--bad) 9%, var(--panel)); border-color: color-mix(in srgb, var(--bad) 55%, var(--line)); z-index: 1; }
+@keyframes blinkp { 50% { opacity: .35; } }
+.pipe-ctl { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; align-items: center; }
+.pipe-ctl .btn { font-size: 14px; padding: 8px 14px; }
+.pipe-ctl .hint { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-left: auto; }
+.term { background: var(--steel); color: var(--unit-text); border-radius: 10px; padding: 14px 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.65; min-width: 0; overflow: auto; height: 300px; margin-top: 12px; border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.term div { white-space: pre-wrap; }
+.term .c { color: #7f95a5; } .term .k { color: #ffb37a; } .term .g { color: #6fdc9c; } .term .w { color: #f0bc3a; } .term .b { color: #ff7a7a; } .term .s { color: #3fe0ea; }
+.ci-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 16px; margin-top: 12px; }
+.ci-grid .term { margin-top: 0; }
+pre.yml { margin: 0; background: var(--steel); color: #c4d2dc; border-radius: 10px; padding: 14px 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; overflow: auto; height: 300px; border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+pre.yml .k { color: #ffb37a; } pre.yml .c { color: #6c8191; } pre.yml .s { color: #3fe0ea; }
+
+.sim-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+footer { border-top: 1px solid var(--line); padding-block: 22px; font-size: 13px; color: var(--muted); margin-top: 60px; }
+footer .wrap { display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+
+@media (max-width: 1000px) {
+  .hero, .inst, .ci-grid { grid-template-columns: minmax(0, 1fr); }
+  nav.secnav { display: none; }
+  .back { margin-left: auto; }
+  .pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stg, .stg:first-child, .stg:last-child { border-radius: 0; margin: 0 -1px -1px 0; }
+  .num { display: none; }
+  .sec-head { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .back span { display: none; }
+  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pkt { font-size: 9.5px; }
+  .kpi b { font-size: 24px; }
+  .pipe-ctl .hint { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">IBRAHAM<span>.</span>MUSTAFA</a>
+    <nav class="secnav" aria-label="Instruments" id="secnav">
+      <a href="#bench">Bench</a><a href="#siggen">Sig gen</a><a href="#spectrum">Spectrum</a><a href="#vna">VNA</a><a href="#atten">Attenuator</a><a href="#ixia">Ixia</a><a href="#cicd">CI/CD</a>
+    </nav>
+    <a class="back" href="index.html">← <span>Main site</span></a>
+    <button class="theme-btn" type="button" id="themeBtn" aria-label="Toggle light or dark theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== HERO / BENCH ===================== -->
+  <div class="wrap" id="bench" style="scroll-margin-top:64px">
+    <div class="hero">
+      <div class="reveal">
+        <div class="eyebrow">Interactive lab · RF &amp; traffic test</div>
+        <h1>The <em>RF</em> bench</h1>
+        <p class="lede">A working model of the test benches I build and run: a known signal goes in, the device under test sits in a shielded chamber, and instruments measure what comes out. Everything is scripted, so it runs on every build. Click any instrument, then scroll down to operate it.</p>
+        <div class="cta">
+          <a class="btn sig" href="#siggen">Start with the signal generator</a>
+          <a class="btn ghost" href="#ixia">Jump to Ixia</a>
+        </div>
+        <div class="legend-row">
+          <span><i style="background:#3fe0ea"></i>RF path (coax)</span>
+          <span><i style="background:#ffb37a"></i>Control (LAN / USB / SCPI)</span>
+          <span><i style="background:#a596ff"></i>Over the air</span>
+        </div>
+      </div>
+      <div class="reveal" style="--d:.1s">
+        <div class="bench"><svg id="benchSvg" viewBox="0 0 760 470" role="group" aria-label="RF test bench diagram"></svg></div>
+        <div class="bench-info" id="benchInfo" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SIGNAL GENERATOR ===================== -->
+  <section id="siggen">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Instrument 01 · stimulus</div>
+          <h2>Signal generator</h2>
+          <p>A precise transmitter you control. Set the frequency, power and modulation, and the device under test receives exactly that. Run a sensitivity sweep to find the weakest signal the receiver can still decode.</p>
+        </div>
+        <div class="num" aria-hidden="true">01</div>
+      </div>
+      <div class="inst">
+        <div class="chassis reveal">
+          <div class="chassis-top"><b>SG-6000 · Vector signal generator</b><span class="rd"><i id="sgLed"></i><span id="sgOut">RF ON</span></span></div>
+          <div class="screen"><canvas id="sgCanvas" height="260" aria-label="Signal generator output: waveform and packet error rate"></canvas><div class="ro"><span>FREQ <b id="sgF">2440.000 MHz</b></span><span>LEVEL <b id="sgP">-60.0 dBm</b></span><span>MOD <b id="sgM">GFSK</b></span></div></div>
+          <div class="knobs">
+            <label class="knob"><span class="lab"><span>Frequency</span><output id="oF">2440 MHz</output></span><input type="range" id="kF" min="2402" max="2480" step="1" value="2440"></label>
+            <label class="knob"><span class="lab"><span>Output level</span><output id="oP">-60 dBm</output></span><input type="range" id="kP" min="-110" max="0" step="1" value="-60"></label>
+            <label class="knob"><span>Modulation</span><select id="kM"><option value="cw">CW (pure tone)</option><option value="gfsk" selected>GFSK (Bluetooth)</option><option value="qpsk">QPSK (Wi-Fi / cellular)</option></select></label>
+          </div>
+          <div class="keys">
+            <button class="ctl" type="button" id="sgRf" aria-pressed="true"><span class="dot" style="--dc:#3fc275"></span>RF output</button>
+            <button class="ctl go" type="button" id="sgSweep">▶ Run sensitivity sweep</button>
+          </div>
+          <div class="scpi" id="sgLog" aria-live="off"></div>
+        </div>
+        <div class="explain reveal" style="--d:.1s">
+          <div class="kpis"><div class="kpi" id="sgK1"><b id="sgSens">—</b><span>Sensitivity @ 10% PER</span></div><div class="kpi"><b id="sgPer">0%</b><span>Packet error rate</span></div></div>
+          <div class="card"><h3>How it's used</h3>
+            <ul><li><b>Receiver sensitivity:</b> step power down until packet errors pass a limit. That level is the spec number.</li>
+            <li><b>Path calibration:</b> inject a known tone and measure it at the other end, so a lossy cable never looks like a bad device.</li>
+            <li><b>Interference:</b> add a second signal next to the wanted one to test blocking and coexistence.</li></ul></div>
+          <div class="card"><h3>Scripted, not clicked</h3><p>Bench instruments speak SCPI over LAN or USB. Python drives them with PyVISA, which is what the log under the screen shows.</p></div>
+          <div class="card used"><h3>Where I've used it</h3><p>Apple: Wi-Fi and Bluetooth testing in RF chambers with PoE access points and signal generators.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPECTRUM ===================== -->
+  <section id="spectrum">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Instrument 02 · measurement</div>
+          <h2>Spectrum analyzer</h2>
+          <p>Shows signal power across frequency. This is the 2.4 GHz band, where Wi-Fi, Bluetooth and microwave ovens fight for the same air. Turn sources on and off, hover to place a marker, and turn on max hold to watch Bluetooth hop.</p>
+        </div>
+        <div class="num" aria-hidden="true">02</div>
+      </div>
+      <div class="inst">
+        <div class="chassis reveal">
+          <div class="chassis-top"><b>SA-2400 · Spectrum analyzer</b><span class="rd"><i></i>SWEEPING</span></div>
+          <div class="screen"><canvas id="saCanvas" height="300" aria-label="Spectrum of the 2.4 GHz band"></canvas><div class="ro"><span>CENTER <b>2442 MHz</b> · SPAN <b>84 MHz</b></span><span>MKR <b id="saMk">—</b></span></div></div>
+          <div class="keys" id="saSrc">
+            <button class="ctl" type="button" data-s="w1" aria-pressed="true"><span class="dot" style="--dc:#3fe0ea"></span>Wi-Fi ch 1</button>
+            <button class="ctl" type="button" data-s="w6" aria-pressed="false"><span class="dot" style="--dc:#3fe0ea"></span>Wi-Fi ch 6</button>
+            <button class="ctl" type="button" data-s="w11" aria-pressed="true"><span class="dot" style="--dc:#3fe0ea"></span>Wi-Fi ch 11</button>
+            <button class="ctl" type="button" data-s="bt" aria-pressed="true"><span class="dot" style="--dc:#a596ff"></span>Bluetooth (hopping)</button>
+            <button class="ctl" type="button" data-s="mw" aria-pressed="false"><span class="dot" style="--dc:#f0bc3a"></span>Microwave oven</button>
+            <button class="ctl" type="button" data-s="tone" aria-pressed="false"><span class="dot" style="--dc:#ffb37a"></span>Sig gen tone</button>
+          </div>
+          <div class="knobs">
+            <label class="knob"><span>Resolution bandwidth</span><select id="saRbw"><option value="30">30 kHz (low noise)</option><option value="100" selected>100 kHz</option><option value="1000">1 MHz (fast)</option></select></label>
+            <div class="knob"><span>Trace</span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ctl" type="button" id="saHold" aria-pressed="false">Max hold</button><button class="ctl" type="button" id="saPeak">Peak search</button></div></div>
+          </div>
+        </div>
+        <div class="explain reveal" style="--d:.1s">
+          <div class="card"><h3>Reading the screen</h3>
+            <ul><li><b>X axis:</b> frequency. <b>Y axis:</b> power in dBm (every 10 dB is 10× power).</li>
+            <li><b>Wi-Fi</b> is a wide 20 MHz block. Channels 1, 6 and 11 are the three that don't overlap.</li>
+            <li><b>Bluetooth</b> is a 1 MHz sliver that hops across 79 channels, 1,600 times a second. Max hold shows the full spread.</li>
+            <li><b>Noise floor</b> drops as you narrow RBW: you see weaker signals, but sweeps take longer.</li></ul></div>
+          <div class="card"><h3>Why it matters</h3><p>When Bluetooth audio stutters only while Wi-Fi is busy, this is where you see why: both radios share one band, often one chip. That's coexistence testing.</p></div>
+          <div class="verdict" id="saVerdict">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VNA ===================== -->
+  <section id="vna">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Instrument 03 · characterization</div>
+          <h2>Vector network analyzer</h2>
+          <p>A VNA tests the test setup itself: cables, connectors, antennas, attenuators. It sends a sweep in and measures what reflects back (S11) and what makes it through (S21). Pick a part to sweep, then move the marker.</p>
+        </div>
+        <div class="num" aria-hidden="true">03</div>
+      </div>
+      <div class="inst">
+        <div class="chassis reveal">
+          <div class="chassis-top"><b>VNA-6 · 2-port network analyzer</b><span class="rd"><i></i>CAL: SOLT ✓</span></div>
+          <div class="screen"><canvas id="vnaCanvas" height="300" aria-label="VNA trace of S11 and S21 versus frequency"></canvas><div class="ro"><span><b style="color:#ffb37a">S11</b> reflection · <b>S21</b> transmission</span><span id="vnaMk">—</span></div></div>
+          <div class="knobs">
+            <label class="knob"><span>Part on the ports</span><select id="vnaDut"><option value="good">Good 1 m test cable</option><option value="bad">Damaged / kinked cable</option><option value="ant">Dual-band Wi-Fi antenna</option><option value="mis">Wrong (75 Ω) adapter</option></select></label>
+            <label class="knob"><span class="lab"><span>Marker</span><output id="vnaMo">2.44 GHz</output></span><input type="range" id="vnaMkr" min="0.5" max="6" step="0.01" value="2.44"></label>
+          </div>
+          <div class="keys"><button class="ctl" type="button" id="vS11" aria-pressed="true"><span class="dot" style="--dc:#ffb37a"></span>S11</button><button class="ctl" type="button" id="vS21" aria-pressed="true"><span class="dot" style="--dc:#3fe0ea"></span>S21</button></div>
+        </div>
+        <div class="explain reveal" style="--d:.1s">
+          <div class="kpis"><div class="kpi" id="vk1"><b id="vRl">—</b><span>Return loss</span></div><div class="kpi" id="vk2"><b id="vIl">—</b><span>Insertion loss</span></div><div class="kpi"><b id="vSwr">—</b><span>VSWR</span></div><div class="kpi"><b id="vPw">—</b><span>Power reflected</span></div></div>
+          <div class="verdict" id="vnaVerdict">—</div>
+          <div class="card"><h3>In plain words</h3>
+            <ul><li><b>S11 low (more negative) is good:</b> little energy bounces back.</li>
+            <li><b>S21 near 0 dB is good:</b> the signal gets through.</li>
+            <li>A damaged cable shows ripple and dips. An antenna only "takes" power at the bands it was built for.</li></ul></div>
+          <div class="card"><h3>Why a test team cares</h3><p>Every chamber has a path-loss number baked into its limits. If a cable drifts by 3 dB, good devices start failing. Sweeping the path keeps the bench honest.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ATTENUATOR ===================== -->
+  <section id="atten">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Instrument 04 · simulated distance</div>
+          <h2>Programmable attenuators</h2>
+          <p>Software-controlled dB steps between the access point and the device. Adding attenuation is the same as walking away, except it's repeatable to 0.25 dB. Sweep it to draw a rate-vs-range curve, or cross-fade two APs to force a roam.</p>
+        </div>
+        <div class="num" aria-hidden="true">04</div>
+      </div>
+      <div class="inst">
+        <div class="chassis reveal">
+          <div class="chassis-top"><b>ATT-2CH · Programmable attenuator</b><span class="rd"><i></i><span id="atMode">RATE VS RANGE</span></span></div>
+          <svg class="att-sch" id="atSch" viewBox="0 0 720 120" aria-label="Schematic: access points through attenuators into the shielded chamber"></svg>
+          <div class="screen"><canvas id="atCanvas" height="260" aria-label="Throughput versus attenuation chart"></canvas><div class="ro"><span>RSSI <b id="atR">-30 dBm</b> · <b id="atMcs">MCS 11</b></span><span>THROUGHPUT <b id="atT">—</b></span></div></div>
+          <div class="knobs">
+            <label class="knob"><span class="lab"><span>Attenuation (AP-1 path)</span><output id="atO">0 dB</output></span><input type="range" id="atK" min="0" max="80" step="1" value="0"></label>
+            <label class="knob"><span>Test</span><select id="atTest"><option value="rvr">Rate vs range (1 AP)</option><option value="roam">Roaming (AP-1 → AP-2)</option></select></label>
+          </div>
+          <div class="keys"><button class="ctl go" type="button" id="atSweep">▶ Auto sweep 0 → 80 dB</button><button class="ctl" type="button" id="atClear">Clear chart</button></div>
+          <div class="scpi" id="atLog" aria-live="off"></div>
+        </div>
+        <div class="explain reveal" style="--d:.1s">
+          <div class="kpis"><div class="kpi" id="atK1"><b id="atLink">Connected</b><span>Link</span></div><div class="kpi"><b id="atAp">AP-1</b><span>Serving AP</span></div></div>
+          <div class="card"><h3>What gets tested this way</h3>
+            <ul><li>Throughput at each attenuation step (rate vs range)</li><li>Connect, disconnect and reconnect at weak signal</li><li>Roaming between two APs as signal shifts</li><li>Suspend and resume with Wi-Fi staying up</li><li>Firmware and driver regressions, build to build</li></ul></div>
+          <div class="card used"><h3>Where I've used it</h3><p><b>Chrome OS:</b> a lab of about 1,000 Chromebooks in RF chambers behind programmable attenuators, each driven remotely through a servo board for firmware and Wi-Fi chipset validation.</p><p><b>Google OmniLab:</b> installed attenuators while deploying RF-shielded racks for Roku, RDK and Android TV, and Chromecast testing.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== IXIA ===================== -->
+  <section id="ixia">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Instrument 05 · network traffic</div>
+          <h2>Ixia traffic generator</h2>
+          <p>The signal generator of networking. An Ixia chassis builds packets in hardware at full line rate, stamps each one, sends it through the switch or router under test, and catches it on the far side. Because it knows exactly what it sent, it can measure every lost, late or out-of-order frame.</p>
+        </div>
+        <div class="num" aria-hidden="true">05</div>
+      </div>
+      <div class="inst">
+        <div class="chassis reveal">
+          <div class="chassis-top"><b>IXIA · 10GE load module</b><span class="rd"><i id="ixLed"></i><span id="ixState">IDLE</span></span></div>
+          <div class="screen"><canvas id="ixCanvas" height="250" aria-label="Animated traffic flowing from Ixia port 1 through the device under test to port 2"></canvas><div class="ro"><span>OFFERED <b id="ixOff">0.00 Gbps</b></span><span>RECEIVED <b id="ixRx">0.00 Gbps</b></span></div></div>
+          <div class="knobs">
+            <label class="knob"><span>Frame size</span><select id="ixF"><option value="64">64 B</option><option value="128">128 B</option><option value="512">512 B</option><option value="1518" selected>1518 B</option><option value="imix">IMIX (mixed)</option></select></label>
+            <label class="knob"><span class="lab"><span>Line rate</span><output id="ixRo">60%</output></span><input type="range" id="ixR" min="1" max="100" step="1" value="60"></label>
+            <label class="knob"><span>Protocol</span><select id="ixP"><option value="udp">IPv4 / UDP</option><option value="tcp">IPv4 / TCP</option><option value="l2">Layer 2 only</option></select></label>
+          </div>
+          <div class="keys">
+            <button class="ctl go" type="button" id="ixGo">▶ Start traffic</button>
+            <button class="ctl" type="button" id="ixCong" aria-pressed="false"><span class="dot" style="--dc:#f0bc3a"></span>Add competing stream</button>
+            <button class="ctl" type="button" id="ixFlap"><span class="dot" style="--dc:#ff5d5d"></span>Flap DUT link</button>
+            <button class="ctl" type="button" id="ixRfc">RFC 2544 throughput test</button>
+          </div>
+          <div class="pkt" id="pkt" role="group" aria-label="Anatomy of a generated frame"></div>
+          <div class="pkt-info" id="pktInfo"></div>
+          <div class="tscroll"><table class="stats"><thead><tr><th>Port</th><th>Tx frames</th><th>Rx frames</th><th>Loss</th><th>Avg latency</th><th>Max latency</th></tr></thead><tbody id="ixStats"></tbody></table></div>
+        </div>
+        <div class="explain reveal" style="--d:.1s">
+          <div class="card"><h3>How it generates traffic</h3>
+            <ul><li><b>Stream builder:</b> you define headers (MAC, VLAN, IP, UDP/TCP) and let fields increment, so one stream can look like thousands of hosts.</li>
+            <li><b>Hardware rate:</b> FPGAs on the load module send at exact line rate, which a laptop running iPerf can't do.</li>
+            <li><b>Signature:</b> each frame carries a stream ID, sequence number and timestamp. The receive port uses them to count loss, latency and reordering.</li></ul></div>
+          <div class="card"><h3>RFC 2544</h3><p>The standard benchmark: for each frame size, find the highest rate with zero loss. Small frames are the hard case, because the switch has to make many more forwarding decisions per second.</p><div class="tscroll"><table class="stats" style="color:var(--ink)"><thead><tr><th>Size</th><th>Max no-loss rate</th><th>Mpps</th></tr></thead><tbody id="rfcBody"><tr><td colspan="3" style="text-align:left;color:var(--muted)">Run the test to fill this in.</td></tr></tbody></table></div></div>
+          <div class="card used"><h3>Where I've used it</h3><p><b>Cisco:</b> configured and deployed Ixia traffic generators across the test network to simulate traffic for switch and router validation, and wrote the provisioning script that connected testbeds to Ixia.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CI/CD ===================== -->
+  <section id="cicd">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">Putting it together · every build</div>
+          <h2>CI/CD on real hardware</h2>
+          <p>The instruments above only pay off when they run automatically. Push a commit: Jenkins or GitLab builds it, a runner wired to the RF bench tests it on real devices, and it goes to staging before release. Run it a few times; benches fail in more than one way.</p>
+        </div>
+        <div class="num" aria-hidden="true">06</div>
+      </div>
+      <div class="pipe reveal" id="pipe"></div>
+      <div class="pipe-ctl">
+        <button class="btn sig" type="button" id="ciGo">⎇ Push a commit</button>
+        <button class="btn ghost" type="button" data-sc="pass">Clean run</button>
+        <button class="btn ghost" type="button" data-sc="dut">Firmware regression</button>
+        <button class="btn ghost" type="button" data-sc="bench">Bench fault</button>
+        <span class="hint" id="ciHint">pick a scenario, or push for a random one</span>
+      </div>
+      <div class="ci-grid reveal">
+        <div class="term" id="ciTerm" aria-live="off"><div class="c"># waiting for a commit…</div></div>
+        <pre class="yml" aria-label="Example pipeline file"><span class="c"># .gitlab-ci.yml (simplified)</span>
+<span class="k">stages</span>: [build, unit, rf_bench, staging, release]
+
+<span class="k">rf_bench</span>:
+  <span class="k">stage</span>: rf_bench
+  <span class="k">tags</span>: [<span class="s">rf-bench</span>]   <span class="c"># runner wired to the chamber</span>
+  <span class="k">script</span>:
+    - python bench/check_path_loss.py --max-drift 1.0
+    - python bench/flash_dut.py --build $CI_COMMIT_SHA
+    - pytest tests/rf --atten 0:80:2 --junitxml=rf.xml
+  <span class="k">artifacts</span>:
+    <span class="k">reports</span>: { <span class="k">junit</span>: rf.xml }
+
+<span class="k">staging</span>:
+  <span class="k">stage</span>: staging
+  <span class="k">script</span>: python deploy.py --env staging-hosts
+  <span class="k">needs</span>: [rf_bench]</pre>
+      </div>
+      <p class="sim-note">Every instrument on this page is a simulation for illustration. The numbers follow real-world behavior but are not measurements from any lab I worked in. "Where I've used it" notes reflect my actual work.</p>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>Ibraham J. Mustafa · RF, network and lab test engineering · CCNA</span><a href="index.html">← Back to the main site</a></div></footer>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NS = 'http://www.w3.org/2000/svg';
+  const S = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const fmt = n => n.toLocaleString('en-US');
+  const C = { bg: '#060b10', grid: '#15222c', axis: '#5f7484', cyan: '#3fe0ea', orange: '#ffb37a', purple: '#a596ff', green: '#3fc275', red: '#ff5d5d', amber: '#f0bc3a', text: '#8fa0ad', white: '#e4ecf1' };
+
+  /* theme (shared with the main site) */
+  const saved = store.get('theme'); if (saved) document.documentElement.dataset.theme = saved;
+  $('#themeBtn').addEventListener('click', () => {
+    const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    const next = dark ? 'light' : 'dark'; document.documentElement.dataset.theme = next; store.set('theme', next);
+  });
+
+  /* reveal + progress + nav highlight */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  const prog = $('#progress');
+  addEventListener('scroll', () => { const h = document.documentElement; prog.style.transform = `scaleX(${h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)})`; }, { passive: true });
+  const navLinks = [...document.querySelectorAll('#secnav a')];
+  const nio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+  ['bench', 'siggen', 'spectrum', 'vna', 'atten', 'ixia', 'cicd'].forEach(id => nio.observe(document.getElementById(id)));
+
+  /* visibility-aware animation loop helpers */
+  const visible = new Set();
+  const vio = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));
+  function canvasKit(cv) {
+    const ctx = cv.getContext('2d'); let w = 0, h = 0; const H0 = +cv.getAttribute('height');
+    const size = () => { const dpr = Math.min(2, devicePixelRatio || 1); w = cv.clientWidth; h = H0; cv.style.height = h + 'px'; cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    size(); vio.observe(cv);
+    return { ctx, get w() { return w; }, get h() { return h; }, size, on: () => visible.has(cv) && !document.hidden };
+  }
+  function grid(k, pad, nx, ny) {
+    const { ctx, w, h } = k; ctx.fillStyle = C.bg; ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    for (let i = 0; i <= nx; i++) { const x = pad.l + (w - pad.l - pad.r) * i / nx; ctx.beginPath(); ctx.moveTo(x + .5, pad.t); ctx.lineTo(x + .5, h - pad.b); ctx.stroke(); }
+    for (let j = 0; j <= ny; j++) { const y = pad.t + (h - pad.t - pad.b) * j / ny; ctx.beginPath(); ctx.moveTo(pad.l, y + .5); ctx.lineTo(w - pad.r, y + .5); ctx.stroke(); }
+  }
+  const logTo = (el, cls, text) => { const d = document.createElement('div'); d.className = cls; d.textContent = text; el.appendChild(d); while (el.children.length > 80) el.firstChild.remove(); el.scrollTop = el.scrollHeight; };
+  const sleep = ms => new Promise(r => setTimeout(r, reduce ? Math.min(ms, 40) : ms));
+
+  /* ================= BENCH DIAGRAM ================= */
+  const bsvg = $('#benchSvg');
+  const BN = {
+    host: { x: 20, y: 20, w: 190, h: 64, tag: 'AUTOMATION HOST', s: 'Python · PyVISA · Jenkins', c: '#ffb37a', go: '#cicd',
+      t: 'Automation host', d: 'Runs the test scripts. It sets every instrument over SCPI, flashes the device, collects results and reports to CI.', u: 'Python automation across Google (servo bring-up for 500+ testbeds, a lab-health system for ~5,000 devices) and Jenkins/GitLab jobs at Apple.' },
+    sg: { x: 20, y: 140, w: 190, h: 64, tag: 'SIGNAL GENERATOR', s: 'known stimulus in', c: '#3fe0ea', go: '#siggen',
+      t: 'Signal generator', d: 'Transmits an exact, controllable RF signal into the setup: for receiver sensitivity, path calibration and interference tests.', u: 'Used in RF chamber testing at Apple.' },
+    att: { x: 280, y: 140, w: 170, h: 64, tag: 'ATTENUATOR', s: '0–95 dB · programmable', c: '#3fe0ea', go: '#atten',
+      t: 'Programmable attenuator', d: 'Cuts signal strength by an exact number of dB under software control, so "distance" becomes a number a script can sweep.', u: 'Chrome OS chamber lab of ~1,000 Chromebooks; installed in shielded racks at Google OmniLab.' },
+    ap: { x: 20, y: 260, w: 190, h: 64, tag: 'ACCESS POINT', s: 'Wi-Fi 6 · PoE', c: '#a596ff', go: '#atten',
+      t: 'Access point', d: 'The real network the device joins. Cabled through the attenuator so the link budget is controlled, not left to the room.', u: 'Wi-Fi testing with PoE access points in RF chambers at Apple.' },
+    ch: { x: 520, y: 110, w: 220, h: 250, tag: 'SHIELDED CHAMBER', s: '', c: '#a596ff', go: '#atten',
+      t: 'RF shielded chamber', d: 'A metal box that blocks outside signals, so results are repeatable. Inside: the device under test, an antenna, and a servo or USB link for remote control.', u: 'RF chambers at Apple and Chrome OS; built RF-isolated chambers and shielded racks for Roku, RDK and Chromecast at Google OmniLab.' },
+    sa: { x: 280, y: 380, w: 170, h: 64, tag: 'SPECTRUM ANALYZER', s: 'what is on the air', c: '#3fe0ea', go: '#spectrum',
+      t: 'Spectrum analyzer', d: 'Measures power versus frequency coming out of the chamber: transmit power, interference and coexistence problems.', u: null },
+    vna: { x: 20, y: 380, w: 190, h: 64, tag: 'VNA', s: 'characterizes the path', c: '#3fe0ea', go: '#vna',
+      t: 'Vector network analyzer', d: 'Sweeps cables, connectors and antennas to measure loss and reflection. It verifies the bench before the bench verifies the device.', u: null },
+    ix: { x: 280, y: 20, w: 170, h: 64, tag: 'IXIA', s: 'line-rate traffic', c: '#ffb37a', go: '#ixia',
+      t: 'Ixia traffic generator', d: 'Generates and measures network traffic in hardware, so the wired side of the network can be loaded and validated.', u: 'Deployed Ixia traffic generators across Cisco test networks to validate switches and routers.' },
+  };
+  const center = n => [n.x + n.w / 2, n.y + n.h / 2];
+  const LINKS = [
+    { p: 'M210 172 H280', k: 'rf' }, { p: 'M450 172 H520', k: 'rf' }, { p: 'M210 292 H245 V172', k: 'rf' },
+    { p: 'M520 330 H485 V412 H450', k: 'rf' }, { p: 'M210 412 H245 V330 H520', k: 'rfd' },
+    { p: 'M115 84 V140', k: 'ctl' }, { p: 'M210 52 H260 V156 H280', k: 'ctl' }, { p: 'M210 40 H280', k: 'ctl' },
+    { p: 'M450 52 H630 V110', k: 'ctl' }, { p: 'M60 84 V110 H8 V412 H20', k: 'ctl' }, { p: 'M150 84 V110 H240 V396 H280', k: 'ctl' },
+  ];
+  const linkColor = { rf: '#3fe0ea', rfd: '#3fe0ea', ctl: '#ffb37a' };
+  LINKS.forEach(L => {
+    S('path', { d: L.p, fill: 'none', stroke: linkColor[L.k], 'stroke-opacity': L.k === 'ctl' ? .45 : .55, 'stroke-width': L.k === 'ctl' ? 1.2 : 2, 'stroke-dasharray': L.k === 'rfd' ? '5 5' : L.k === 'ctl' ? '2 4' : '' }, bsvg);
+    if (L.k !== 'ctl' && !reduce) {
+      const dot = S('circle', { r: 3.2, fill: linkColor[L.k] }, bsvg);
+      S('animateMotion', { dur: (2.2 + Math.random()).toFixed(2) + 's', repeatCount: 'indefinite', path: L.p }, dot);
+    }
+  });
+  // chamber interior
+  const chG = S("g", { "pointer-events": "none" }, bsvg);
+  const ch = BN.ch;
+  for (let i = 0; i < 14; i++) S('path', { d: `M${ch.x + 10 + i * 15} ${ch.y + ch.h - 10} l7 -14 l7 14`, fill: 'none', stroke: '#2a3a46', 'stroke-width': 1 }, chG);
+  const dutX = ch.x + 120, dutY = ch.y + 120;
+  S('rect', { x: dutX - 30, y: dutY - 22, width: 60, height: 44, rx: 6, fill: '#1a2732', stroke: '#a596ff' }, chG);
+  S('text', { x: dutX, y: dutY + 4, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono, monospace', 'font-size': 11, fill: '#dce6ec' }, chG).textContent = 'DUT';
+  S('path', { d: `M${ch.x + 40} ${ch.y + 220} v-30 m-8 -8 l8 8 l8 -8`, stroke: '#a596ff', fill: 'none', 'stroke-width': 1.5 }, chG);
+  if (!reduce) for (let i = 0; i < 3; i++) {
+    const c = S('circle', { cx: ch.x + 40, cy: ch.y + 180, r: 6, fill: 'none', stroke: '#a596ff', 'stroke-width': 1.2 }, chG);
+    S('animate', { attributeName: 'r', from: 6, to: 90, dur: '2.4s', begin: (i * .8) + 's', repeatCount: 'indefinite' }, c);
+    S('animate', { attributeName: 'opacity', from: .8, to: 0, dur: '2.4s', begin: (i * .8) + 's', repeatCount: 'indefinite' }, c);
+  }
+  S('rect', { x: dutX - 26, y: dutY + 40, width: 52, height: 16, rx: 3, fill: '#101b23', stroke: '#ffb37a', 'stroke-opacity': .6 }, chG);
+  S('text', { x: dutX, y: dutY + 52, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono, monospace', 'font-size': 9.5, fill: '#ffb37a' }, chG).textContent = 'servo';
+  let selB = null;
+  Object.entries(BN).forEach(([id, n]) => {
+    const g = S('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': n.t, style: `--c:${n.c}` }, bsvg);
+    S('rect', { class: 'box', x: n.x, y: n.y, width: n.w, height: n.h, rx: 8, 'fill-opacity': id === 'ch' ? .25 : 1 }, g);
+    S('rect', { x: n.x, y: n.y, width: 4, height: n.h, rx: 2, fill: n.c }, g);
+    S('text', { class: 'tag', x: n.x + 14, y: n.y + 26 }, g).textContent = n.tag;
+    if (n.s) S('text', { class: 's', x: n.x + 14, y: n.y + 46 }, g).textContent = n.s;
+    const pick = () => { selB = id; bsvg.querySelectorAll('.node').forEach(e => e.classList.remove('sel')); g.classList.add('sel'); renderBench(); };
+    g.addEventListener('click', pick); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+    if (id === 'host') g.classList.add('sel');
+  });
+  bsvg.appendChild(chG); // keep interior above chamber box
+  function renderBench() {
+    const n = BN[selB || 'host'];
+    $('#benchInfo').innerHTML = `<h3 style="color:${n.c === '#3fe0ea' ? 'var(--sig)' : 'var(--ink)'}">${n.t}</h3><p>${n.d}</p>${n.u ? `<p class="used"><b>Where I've used it:</b> ${n.u}</p>` : '<p class="used" style="border-color:var(--line)">Part of the standard bench this page models.</p>'}<a class="go" href="${n.go}">Operate it ↓</a>`;
+  }
+  renderBench();
+
+  /* ================= SIGNAL GENERATOR ================= */
+  const sgK = canvasKit($('#sgCanvas'));
+  const sgLog = $('#sgLog');
+  let sgF = 2440, sgP = -60, sgM = 'gfsk', sgRf = true, sweepPts = [], sweeping = false, sgT = 0;
+  const SENS = -91.5; // simulated receiver sensitivity
+  const per = p => 100 / (1 + Math.exp((p - SENS) * 1.35));
+  function sgReadout() {
+    $('#sgF').textContent = sgF.toFixed(3) + ' MHz'; $('#sgP').textContent = sgP.toFixed(1) + ' dBm'; $('#sgM').textContent = sgM.toUpperCase();
+    $('#oF').textContent = sgF + ' MHz'; $('#oP').textContent = sgP + ' dBm';
+    $('#sgPer').textContent = sgRf ? per(sgP).toFixed(per(sgP) < 1 ? 2 : 0) + '%' : '100%';
+    $('#sgOut').textContent = sgRf ? 'RF ON' : 'RF OFF'; $('#sgLed').style.background = sgRf ? C.green : C.red; $('#sgLed').style.boxShadow = `0 0 8px ${sgRf ? C.green : C.red}`;
+  }
+  const scpi = (cmd, cls = 'k') => logTo(sgLog, cls, cmd);
+  logTo(sgLog, 'c', '# PyVISA session: sg = rm.open_resource("TCPIP::10.0.4.21::INSTR")');
+  scpi('sg.query("*IDN?")  → SG-6000,SN1042,FW 3.2.1', 'g');
+  function bindSg(id, fn) { $(id).addEventListener('input', e => { fn(e.target.value); sgReadout(); }); $(id).addEventListener('change', e => { const c = { '#kF': `sg.write(":FREQ ${sgF}MHz")`, '#kP': `sg.write(":POW ${sgP}dBm")`, '#kM': `sg.write(":SOUR:MOD:TYPE ${sgM.toUpperCase()}")` }[id]; scpi(c); }); }
+  bindSg('#kF', v => sgF = +v); bindSg('#kP', v => sgP = +v); bindSg('#kM', v => sgM = v);
+  $('#sgRf').addEventListener('click', e => { sgRf = !sgRf; e.currentTarget.setAttribute('aria-pressed', sgRf); scpi(`sg.write(":OUTP ${sgRf ? 'ON' : 'OFF'}")`); sgReadout(); });
+  function drawSg() {
+    const k = sgK, { ctx, w, h } = k; const split = w > 620 ? Math.round(w * .55) : w; const pad = { l: 10, r: w - split + 10, t: 30, b: 14 };
+    grid(k, pad, 10, 6);
+    // waveform
+    const mid = (pad.t + h - pad.b) / 2, amp = sgRf ? clamp((sgP + 110) / 110, .04, 1) * (h - pad.t - pad.b) / 2.2 : 0;
+    ctx.beginPath(); ctx.strokeStyle = C.cyan; ctx.lineWidth = 1.6;
+    const cyc = 14 + (sgF - 2402) / 8;
+    for (let x = pad.l; x <= split - 10; x++) {
+      const t = (x - pad.l) / (split - 10 - pad.l);
+      let ph = 2 * Math.PI * cyc * t + sgT;
+      if (sgM === 'gfsk') { const bit = Math.floor(t * 8 + sgT * .2) % 3 === 0 ? 1 : -1; ph += bit * 2 * Math.PI * 3 * t; }
+      if (sgM === 'qpsk') { const sym = Math.floor(t * 8 + sgT * .2); ph += ((sym * 7) % 4) * Math.PI / 2; }
+      const y = mid - Math.sin(ph) * amp;
+      x === pad.l ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = C.text; ctx.font = '11px JetBrains Mono, monospace'; ctx.fillText('time domain', pad.l + 4, h - 20);
+    if (split === w) return; // narrow screens: waveform only, PER shown in KPIs
+    // PER plot
+    const x0 = split + 34, x1 = w - 12, y0 = pad.t + 4, y1 = h - 30;
+    ctx.strokeStyle = C.grid; ctx.strokeRect(x0 + .5, y0 + .5, x1 - x0, y1 - y0);
+    const X = p => x0 + (p - (-60)) / (-100 - (-60)) * (x1 - x0), Y = v => y1 - v / 100 * (y1 - y0);
+    ctx.fillStyle = C.text; ctx.fillText('PER %', x0 - 30, y0 + 10); ctx.fillText('-60', x0 - 4, y1 + 14); ctx.fillText('-100 dBm', x1 - 56, y1 + 14);
+    ctx.strokeStyle = 'rgba(255,93,93,.5)'; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(x0, Y(10)); ctx.lineTo(x1, Y(10)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = C.red; ctx.fillText('10% limit', x0 + 4, Y(10) - 4);
+    if (sweepPts.length) { ctx.beginPath(); ctx.strokeStyle = C.orange; ctx.lineWidth = 2; sweepPts.forEach(([p, v], i) => i ? ctx.lineTo(X(p), Y(v)) : ctx.moveTo(X(p), Y(v))); ctx.stroke(); sweepPts.forEach(([p, v]) => { ctx.fillStyle = v > 10 ? C.red : C.orange; ctx.fillRect(X(p) - 2, Y(v) - 2, 4, 4); }); }
+    if (sgP <= -60 && sgP >= -100) { ctx.fillStyle = C.cyan; ctx.beginPath(); ctx.arc(X(sgP), Y(sgRf ? per(sgP) : 100), 4, 0, 7); ctx.fill(); }
+  }
+  $('#sgSweep').addEventListener('click', async e => {
+    if (sweeping) return; sweeping = true; const b = e.currentTarget; b.disabled = true; sweepPts = [];
+    if (!sgRf) { sgRf = true; $('#sgRf').setAttribute('aria-pressed', 'true'); scpi('sg.write(":OUTP ON")'); }
+    logTo(sgLog, 'c', '# sweep: step level down 1 dB, send 1,000 packets, count errors');
+    let found = null;
+    for (let p = -60; p >= -100; p--) {
+      sgP = p; $('#kP').value = p; const v = clamp(per(p) + (Math.random() - .5) * Math.min(3, per(p) * .2), 0, 100); sweepPts.push([p, v]); sgReadout();
+      if (p % 4 === 0 || v > 10) scpi(`sg.write(":POW ${p}dBm"); dut.rx(1000) → PER ${v.toFixed(1)}%`, v > 10 ? 'w' : 'k');
+      if (v > 10 && found === null) { found = p + 1; break; }
+      await sleep(70);
+    }
+    $('#sgSens').textContent = found + ' dBm'; $('#sgK1').className = 'kpi good';
+    logTo(sgLog, 'g', `✓ sensitivity = ${found} dBm (spec ≤ -88 dBm) → PASS`);
+    b.disabled = false; sweeping = false;
+  });
+  sgReadout();
+
+  /* ================= SPECTRUM ANALYZER ================= */
+  const saK = canvasKit($('#saCanvas'));
+  const FMIN = 2400, FMAX = 2484, NPT = 420;
+  const src = { w1: true, w6: false, w11: true, bt: true, mw: false, tone: false };
+  let rbw = 100, hold = false, holdArr = null, marker = null, saPhase = 0;
+  $('#saSrc').querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => { src[b.dataset.s] = !src[b.dataset.s]; b.setAttribute('aria-pressed', src[b.dataset.s]); holdArr = null; saVerdict(); }));
+  $('#saRbw').addEventListener('change', e => { rbw = +e.target.value; holdArr = null; });
+  $('#saHold').addEventListener('click', e => { hold = !hold; e.currentTarget.setAttribute('aria-pressed', hold); holdArr = null; });
+  const db2mw = d => Math.pow(10, d / 10), mw2db = m => 10 * Math.log10(m);
+  let lastTrace = [];
+  function trace() {
+    const floor = -95 + 10 * Math.log10(rbw / 100);
+    const out = new Array(NPT);
+    const hop = 2402 + Math.floor(Math.random() * 79);
+    const hop2 = 2402 + Math.floor(Math.random() * 79);
+    for (let i = 0; i < NPT; i++) {
+      const f = FMIN + (FMAX - FMIN) * i / (NPT - 1);
+      let m = db2mw(floor + (Math.random() - .5) * 4);
+      const wifi = (c, lvl) => { const d = Math.abs(f - c); const v = d < 9 ? lvl : d < 11 ? lvl - (d - 9) * 12 : d < 30 ? lvl - 24 - (d - 11) * 1.4 : -200; m += db2mw(v + (Math.random() - .5) * 3); };
+      if (src.w1) wifi(2412, -42); if (src.w6) wifi(2437, -46); if (src.w11) wifi(2462, -50);
+      if (src.bt) { [hop, hop2].forEach(hf => { const d = Math.abs(f - hf); if (d < 1.2) m += db2mw(-38 - d * 18); }); }
+      if (src.mw) { const d = Math.abs(f - (2455 + Math.sin(saPhase) * 6)); if (d < 18) m += db2mw(-52 - d * 1.1 + (Math.random() - .5) * 8) * (Math.sin(saPhase * 9) > -.2 ? 1 : 0.05); }
+      if (src.tone) { const d = Math.abs(f - 2440); if (d < .5) m += db2mw(-30); }
+      out[i] = mw2db(m);
+    }
+    return out;
+  }
+  function drawSa() {
+    const k = saK, { ctx, w, h } = k, pad = { l: 44, r: 12, t: 40, b: 26 };
+    grid(k, pad, 12, 7);
+    const X = i => pad.l + (w - pad.l - pad.r) * i / (NPT - 1), Y = d => pad.t + (h - pad.t - pad.b) * (( -20 - d) / 85);
+    ctx.fillStyle = C.text; ctx.font = '10.5px JetBrains Mono, monospace';
+    for (let d = -20; d >= -100; d -= 20) ctx.fillText(d, 6, Y(d) + 4);
+    [2400, 2412, 2437, 2462, 2484].forEach(f => ctx.fillText(f, X((f - FMIN) / (FMAX - FMIN) * (NPT - 1)) - 14, h - 8));
+    const t = lastTrace = trace();
+    if (hold) { if (!holdArr) holdArr = t.slice(); else for (let i = 0; i < NPT; i++) holdArr[i] = Math.max(holdArr[i], t[i]); }
+    // fill
+    const g = ctx.createLinearGradient(0, pad.t, 0, h - pad.b); g.addColorStop(0, 'rgba(63,224,234,.28)'); g.addColorStop(1, 'rgba(63,224,234,0)');
+    ctx.beginPath(); t.forEach((d, i) => { const y = clamp(Y(d), pad.t, h - pad.b); i ? ctx.lineTo(X(i), y) : ctx.moveTo(X(i), y); }); ctx.lineTo(X(NPT - 1), h - pad.b); ctx.lineTo(X(0), h - pad.b); ctx.closePath(); ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath(); t.forEach((d, i) => { const y = clamp(Y(d), pad.t, h - pad.b); i ? ctx.lineTo(X(i), y) : ctx.moveTo(X(i), y); }); ctx.strokeStyle = C.cyan; ctx.lineWidth = 1.3; ctx.stroke();
+    if (hold && holdArr) { ctx.beginPath(); holdArr.forEach((d, i) => { const y = clamp(Y(d), pad.t, h - pad.b); i ? ctx.lineTo(X(i), y) : ctx.moveTo(X(i), y); }); ctx.strokeStyle = C.purple; ctx.lineWidth = 1.2; ctx.stroke(); }
+    if (marker !== null) {
+      const arr = hold && holdArr ? holdArr : t; const d = arr[marker]; const x = X(marker), y = clamp(Y(d), pad.t, h - pad.b);
+      ctx.strokeStyle = 'rgba(255,179,122,.5)'; ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, h - pad.b); ctx.stroke();
+      ctx.fillStyle = C.orange; ctx.beginPath(); ctx.moveTo(x, y - 2); ctx.lineTo(x - 6, y - 12); ctx.lineTo(x + 6, y - 12); ctx.fill();
+      $('#saMk').textContent = `${(FMIN + (FMAX - FMIN) * marker / (NPT - 1)).toFixed(1)} MHz · ${d.toFixed(1)} dBm`;
+    }
+  }
+  const saCv = $('#saCanvas');
+  saCv.addEventListener('pointermove', e => { const r = saCv.getBoundingClientRect(); const pl = 44, pr = 12; marker = clamp(Math.round((e.clientX - r.left - pl) / (r.width - pl - pr) * (NPT - 1)), 0, NPT - 1); });
+  $('#saPeak').addEventListener('click', () => { const arr = hold && holdArr ? holdArr : lastTrace; let mi = 0; arr.forEach((d, i) => { if (d > arr[mi]) mi = i; }); marker = mi; });
+  function saVerdict() {
+    const v = $('#saVerdict');
+    const wifiOn = src.w1 || src.w6 || src.w11;
+    if (src.bt && wifiOn && src.mw) { v.className = 'verdict fail'; v.textContent = '⚠ Crowded band: Bluetooth will hop into Wi-Fi and the oven. Expect retries and audio dropouts.'; }
+    else if (src.bt && wifiOn) { v.className = 'verdict'; v.textContent = 'Bluetooth and Wi-Fi share the band. Adaptive hopping steers BT away from busy Wi-Fi channels.'; }
+    else if (src.mw) { v.className = 'verdict fail'; v.textContent = 'Microwave ovens leak around 2.45 GHz, right on top of Wi-Fi channel 6–11.'; }
+    else { v.className = 'verdict pass'; v.textContent = '✓ Clean enough to test: the chamber is doing its job.'; }
+  }
+  saVerdict();
+
+  /* ================= VNA ================= */
+  const vK = canvasKit($('#vnaCanvas'));
+  let vDut = 'good', vMk = 2.44, show11 = true, show21 = true;
+  function s11(f) {
+    switch (vDut) {
+      case 'good': return -32 + 4 * Math.sin(f * 9) - f * .8;
+      case 'bad': return -13 + 5 * Math.sin(f * 7.3) + (Math.abs(f - 4.2) < .25 ? 7 : 0);
+      case 'ant': return Math.min(-2.5 - .3 * Math.sin(f * 3), -2.5 - 20 * Math.exp(-Math.pow((f - 2.44) / .09, 2)), -2.5 - 15 * Math.exp(-Math.pow((f - 5.5) / .22, 2)));
+      case 'mis': return -14 + 1.2 * Math.sin(f * 4);
+    }
+  }
+  function s21(f) {
+    switch (vDut) {
+      case 'good': return -(.15 + .42 * Math.sqrt(f)) + .05 * Math.sin(f * 9);
+      case 'bad': return -(.4 + .7 * Math.sqrt(f)) - 1.1 * (1 + Math.sin(f * 7.3)) - 9 * Math.exp(-Math.pow((f - 4.2) / .12, 2));
+      case 'ant': return null;
+      case 'mis': return -(.9 + .45 * Math.sqrt(f)) + .3 * Math.sin(f * 4);
+    }
+  }
+  function vnaUpdate() {
+    const a = s11(vMk), b = s21(vMk); const G = Math.pow(10, a / 20); const swr = (1 + G) / (1 - G);
+    $('#vnaMo').textContent = vMk.toFixed(2) + ' GHz';
+    $('#vRl').textContent = (-a).toFixed(1) + ' dB'; $('#vIl').textContent = b === null ? 'n/a' : (-b).toFixed(2) + ' dB';
+    $('#vSwr').textContent = swr.toFixed(2) + ':1'; $('#vPw').textContent = (G * G * 100).toFixed(G * G < .01 ? 2 : 1) + '%';
+    $('#vk1').className = 'kpi ' + (-a >= 15 ? 'good' : 'bad'); $('#vk2').className = 'kpi ' + (b === null ? '' : -b <= 2 ? 'good' : 'bad');
+    $('#vnaMk').textContent = `MKR ${vMk.toFixed(2)} GHz  S11 ${a.toFixed(1)} dB${b === null ? '' : '  S21 ' + b.toFixed(2) + ' dB'}`;
+    const V = $('#vnaVerdict');
+    const msg = { good: ['pass', '✓ PASS: return loss > 15 dB and insertion loss < 2 dB across 0.5–6 GHz. Safe to use in the chamber.'],
+      bad: ['fail', '✗ FAIL: ripple and a deep notch near 4.2 GHz. A kinked cable like this makes good devices fail. Replace it and re-cal.'],
+      ant: ['pass', '✓ Antenna matched at 2.4 GHz and 5.5 GHz (deep S11 dips), reflective everywhere else, exactly as designed.'],
+      mis: ['fail', '✗ FAIL: ~4% of power reflects everywhere. A 75 Ω part in a 50 Ω system: right connector, wrong impedance.'] }[vDut];
+    V.className = 'verdict ' + msg[0]; V.textContent = msg[1];
+    drawVna();
+  }
+  function drawVna() {
+    const k = vK, { ctx, w, h } = k, pad = { l: 44, r: 14, t: 40, b: 26 };
+    grid(k, pad, 11, 8);
+    const X = f => pad.l + (w - pad.l - pad.r) * (f - .5) / 5.5, Y = d => pad.t + (h - pad.t - pad.b) * (-d / 40);
+    ctx.fillStyle = C.text; ctx.font = '10.5px JetBrains Mono, monospace';
+    for (let d = 0; d >= -40; d -= 10) ctx.fillText(d + ' dB', 4, Y(d) + 4);
+    [1, 2, 3, 4, 5, 6].forEach(f => ctx.fillText(f + ' GHz', X(f) - 18, h - 8));
+    ctx.strokeStyle = 'rgba(255,93,93,.45)'; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(pad.l, Y(-15)); ctx.lineTo(w - pad.r, Y(-15)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,93,93,.8)'; ctx.fillText('S11 limit', w - pad.r - 62, Y(-15) - 4);
+    const plot = (fn, col) => { ctx.beginPath(); let started = false; for (let i = 0; i <= 400; i++) { const f = .5 + 5.5 * i / 400; const v = fn(f); if (v === null) return; const y = clamp(Y(v), pad.t, h - pad.b); started ? ctx.lineTo(X(f), y) : ctx.moveTo(X(f), y); started = true; } ctx.strokeStyle = col; ctx.lineWidth = 1.8; ctx.stroke(); };
+    if (show11) plot(s11, C.orange); if (show21) plot(s21, C.cyan);
+    const x = X(vMk); ctx.strokeStyle = 'rgba(228,236,241,.45)'; ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, h - pad.b); ctx.stroke();
+    [[show11 && s11(vMk), C.orange], [show21 && s21(vMk), C.cyan]].forEach(([v, col]) => { if (v === false || v === null) return; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, clamp(Y(v), pad.t, h - pad.b), 4, 0, 7); ctx.fill(); });
+  }
+  $('#vnaDut').addEventListener('change', e => { vDut = e.target.value; vnaUpdate(); });
+  $('#vnaMkr').addEventListener('input', e => { vMk = +e.target.value; vnaUpdate(); });
+  $('#vS11').addEventListener('click', e => { show11 = !show11; e.currentTarget.setAttribute('aria-pressed', show11); drawVna(); });
+  $('#vS21').addEventListener('click', e => { show21 = !show21; e.currentTarget.setAttribute('aria-pressed', show21); drawVna(); });
+  vnaUpdate();
+
+  /* ================= ATTENUATOR ================= */
+  const aK = canvasKit($('#atCanvas'));
+  const atLog = $('#atLog');
+  const MCS = [[-52, 11, 1201], [-55, 10, 1081], [-57, 9, 961], [-59, 8, 865], [-63, 7, 721], [-64, 6, 649], [-65, 5, 577], [-70, 4, 432], [-74, 3, 288], [-77, 2, 216], [-79, 1, 144], [-84, 0, 72]];
+  const rate = rssi => MCS.find(m => rssi >= m[0]) || null;
+  let att = 0, atTest = 'rvr', atPts = [], atSweep = false, serving = 1, atHist = [];
+  const sch = $('#atSch');
+  function drawSch() {
+    sch.innerHTML = '';
+    const a1 = att, a2 = atTest === 'roam' ? 80 - att : null;
+    const box = (x, y, w, h, t, s, col) => { S('rect', { x, y, width: w, height: h, rx: 6, fill: '#101b23', stroke: col }, sch); S('text', { x: x + w / 2, y: y + h / 2 - (s ? 3 : -4), 'text-anchor': 'middle' }, sch).textContent = t; if (s) S('text', { class: 's', x: x + w / 2, y: y + h / 2 + 13, 'text-anchor': 'middle' }, sch).textContent = s; };
+    const yy = atTest === 'roam' ? 18 : 38;
+    box(10, yy, 110, 44, 'AP-1', '5 GHz · +20 dBm', serving === 1 ? '#3fe0ea' : '#2f4250');
+    S('path', { d: `M120 ${yy + 22} H220`, stroke: '#3fe0ea', 'stroke-width': 2 }, sch);
+    box(220, yy, 130, 44, `ATT1 ${a1} dB`, 'step 1 dB', '#ffb37a');
+    S('path', { d: `M350 ${yy + 22} H${atTest === 'roam' ? 470 : 470} V60 H490`, stroke: '#3fe0ea', 'stroke-width': 2, fill: 'none' }, sch);
+    if (a2 !== null) {
+      box(10, 62, 110, 44, 'AP-2', '5 GHz · +20 dBm', serving === 2 ? '#3fe0ea' : '#2f4250');
+      S('path', { d: 'M120 84 H220', stroke: '#3fe0ea', 'stroke-width': 2 }, sch);
+      box(220, 62, 130, 44, `ATT2 ${a2} dB`, 'mirrors ATT1', '#ffb37a');
+      S('path', { d: 'M350 84 H470 V60', stroke: '#3fe0ea', 'stroke-width': 2, fill: 'none' }, sch);
+    }
+    S('rect', { x: 490, y: 14, width: 220, height: 92, rx: 8, fill: 'rgba(165,150,255,.08)', stroke: '#a596ff' }, sch);
+    S('text', { x: 600, y: 40, 'text-anchor': 'middle' }, sch).textContent = 'SHIELDED CHAMBER';
+    S('text', { class: 's', x: 600, y: 62, 'text-anchor': 'middle' }, sch).textContent = 'Chromebook DUT + servo';
+    S('text', { class: 's', x: 600, y: 82, 'text-anchor': 'middle' }, sch).textContent = 'outside RF blocked: > 80 dB';
+  }
+  function atState() {
+    const r1 = -30 - att + (Math.random() - .5) * 1.5, r2 = atTest === 'roam' ? -30 - (80 - att) + (Math.random() - .5) * 1.5 : -200;
+    if (atTest === 'roam') {
+      const cur = serving === 1 ? r1 : r2, other = serving === 1 ? r2 : r1;
+      if (cur < -68 && other > cur + 8) { serving = serving === 1 ? 2 : 1; logTo(atLog, 'g', `↺ roam: 802.11r fast transition to AP-${serving} (RSSI ${other.toFixed(0)} dBm, ~38 ms, no disconnect)`); }
+    } else serving = 1;
+    const rssi = serving === 1 ? r1 : r2; const m = rate(rssi);
+    const tput = m ? m[2] * .7 * (0.94 + Math.random() * .06) : 0;
+    return { rssi, m, tput, r1, r2 };
+  }
+  let lastAt = atState();
+  function atRead() {
+    const s = lastAt;
+    $('#atR').textContent = s.rssi.toFixed(0) + ' dBm'; $('#atMcs').textContent = s.m ? 'MCS ' + s.m[1] : 'NO LINK';
+    $('#atT').textContent = s.m ? Math.round(s.tput) + ' Mbps' : '0 Mbps'; $('#atO').textContent = att + ' dB';
+    $('#atLink').textContent = s.m ? 'Connected' : 'Dropped'; $('#atK1').className = 'kpi ' + (s.m ? 'good' : 'bad'); $('#atAp').textContent = atTest === 'roam' ? 'AP-' + serving : 'AP-1';
+    $('#atMode').textContent = atTest === 'roam' ? 'ROAMING' : 'RATE VS RANGE';
+  }
+  function drawAt() {
+    const k = aK, { ctx, w, h } = k, pad = { l: 46, r: 22, t: 40, b: 26 };
+    grid(k, pad, 8, 5);
+    const X = a => pad.l + (w - pad.l - pad.r) * a / 80, Y = t => h - pad.b - (h - pad.t - pad.b) * t / 900;
+    ctx.fillStyle = C.text; ctx.font = '10.5px JetBrains Mono, monospace';
+    for (let t = 0; t <= 900; t += 300) ctx.fillText(t, 8, Y(t) + 4);
+    for (let a = 0; a <= 80; a += 20) ctx.fillText(a + ' dB', X(a) - (a === 80 ? 30 : 12), h - 8);
+    if (atPts.length) {
+      ctx.beginPath(); atPts.forEach(([a, t], i) => i ? ctx.lineTo(X(a), Y(t)) : ctx.moveTo(X(a), Y(t))); ctx.strokeStyle = C.orange; ctx.lineWidth = 2; ctx.stroke();
+      atPts.forEach(([a, t, ap]) => { ctx.fillStyle = ap === 2 ? C.purple : C.orange; ctx.fillRect(X(a) - 2, Y(t) - 2, 4, 4); });
+    }
+    const s = lastAt; ctx.fillStyle = s.m ? C.cyan : C.red; ctx.beginPath(); ctx.arc(X(att), Y(s.tput), 5, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(63,224,234,.35)'; ctx.beginPath(); ctx.moveTo(X(att), pad.t); ctx.lineTo(X(att), h - pad.b); ctx.stroke();
+  }
+  $('#atK').addEventListener('input', e => { att = +e.target.value; lastAt = atState(); drawSch(); atRead(); });
+  $('#atK').addEventListener('change', () => logTo(atLog, 'k', `att.write("CHAN 1;ATT ${att}")  → RSSI ${lastAt.rssi.toFixed(0)} dBm, ${Math.round(lastAt.tput)} Mbps`));
+  $('#atTest').addEventListener('change', e => { atTest = e.target.value; serving = 1; atPts = []; att = 0; $('#atK').value = 0; lastAt = atState(); drawSch(); atRead(); logTo(atLog, 'c', atTest === 'roam' ? '# roaming: ATT1 rises while ATT2 falls; client should hand off to AP-2 without dropping' : '# rate vs range: one AP, attenuation up in 2 dB steps'); });
+  $('#atClear').addEventListener('click', () => { atPts = []; });
+  $('#atSweep').addEventListener('click', async e => {
+    if (atSweep) return; atSweep = true; const b = e.currentTarget; b.disabled = true; atPts = []; serving = 1;
+    logTo(atLog, 'c', `# ${atTest === 'roam' ? 'roam' : 'rate-vs-range'} sweep · iperf3 -c dut -t 2 at every step`);
+    let dropped = null;
+    for (let a = 0; a <= 80; a += 2) {
+      att = a; $('#atK').value = a; lastAt = atState(); atPts.push([a, lastAt.tput, serving]); drawSch(); atRead();
+      if (a % 10 === 0) logTo(atLog, 'k', `ATT ${String(a).padStart(2)} dB  RSSI ${lastAt.rssi.toFixed(0)} dBm  ${lastAt.m ? 'MCS ' + lastAt.m[1] : '---'}  ${Math.round(lastAt.tput)} Mbps`);
+      if (!lastAt.m && dropped === null) { dropped = a; logTo(atLog, 'w', `⚠ link lost at ${a} dB (RSSI ${lastAt.rssi.toFixed(0)} dBm)`); }
+      await sleep(120);
+    }
+    logTo(atLog, 'g', atTest === 'roam' ? '✓ roam completed with no disconnect → PASS' : `✓ curve saved: rvr_${new Date().toISOString().slice(0, 10)}.csv · compare with last build`);
+    b.disabled = false; atSweep = false;
+  });
+  logTo(atLog, 'c', '# att = rm.open_resource("TCPIP::10.0.4.30::5025::SOCKET")');
+  drawSch(); atRead();
+
+  /* ================= IXIA ================= */
+  const iK = canvasKit($('#ixCanvas'));
+  let ixOn = false, ixSize = 1518, ixRate = 60, ixProto = 'udp', ixCong = false, flapUntil = 0;
+  const port = { tx: 0, rx: 0, latSum: 0, latN: 0, latMax: 0 };
+  const LINE = 10e9;
+  const sizeOf = () => ixSize === 'imix' ? 362 : +ixSize;
+  const linePps = s => LINE / ((s + 20) * 8);
+  const DUT_PPS = 12.2e6; // simulated forwarding limit
+  function model() {
+    const s = sizeOf(); const offeredPps = linePps(s) * ixRate / 100;
+    const bg = ixCong ? linePps(s) * .35 : 0;
+    const egressCap = Math.min(linePps(s), DUT_PPS * (ixCong ? .9 : 1));
+    let rxPps = Math.min(offeredPps, Math.max(0, egressCap - bg * (offeredPps / Math.max(1, offeredPps + bg)) * (offeredPps + bg > egressCap ? 1 : 0)));
+    const util = Math.min(.999, (offeredPps + bg) / egressCap);
+    if (offeredPps + bg <= egressCap) rxPps = offeredPps;
+    else rxPps = offeredPps * egressCap / (offeredPps + bg);
+    const flapping = performance.now() < flapUntil; if (flapping) rxPps = 0;
+    const base = 1.9 + s * 8 / 10e3;
+    const lat = flapping ? 0 : base + (util > .98 ? 48 : 1.2 * util / (1 - util));
+    return { s, offeredPps, rxPps, util, lat, flapping };
+  }
+  const PKT = [
+    ['Ethernet', 14, '#3fe0ea', 'Destination and source MAC addresses plus EtherType. Ixia can increment the MAC per frame to look like thousands of hosts.'],
+    ['VLAN', 4, '#5aa6ff', '802.1Q tag: puts the stream in a VLAN and sets priority (PCP) to test QoS queues.'],
+    ['IPv4', 20, '#a596ff', 'Source and destination IP, TTL, DSCP. Incrementing IPs exercise the routing table and ECMP hashing.'],
+    ['UDP', 8, '#ffb37a', 'Ports for the flow. UDP has no retries, so any loss in the DUT shows up directly in the counters.'],
+    ['Payload', 0, '#6fdc9c', 'Fill pattern (zeros, random, PRBS) to pad the frame out to the configured size.'],
+    ['Signature', 20, '#f0bc3a', 'Ixia\'s instrumentation: stream ID, sequence number and transmit timestamp. The receive port matches them to measure loss, latency and reordering per stream.'],
+    ['FCS', 4, '#ff7a7a', 'Ethernet CRC. A bad FCS on receive means corruption on the wire or inside the DUT.'],
+  ];
+  function renderPkt() {
+    const s = sizeOf(); const box = $('#pkt'); box.innerHTML = '';
+    const items = PKT.filter(p => !(ixProto === 'l2' && (p[0] === 'IPv4' || p[0] === 'UDP'))).map(p => p.slice());
+    if (ixProto === 'tcp') items.forEach(p => { if (p[0] === 'UDP') { p[0] = 'TCP'; p[1] = 20; p[3] = 'Ports, sequence and ACK numbers. Ixia can emulate full TCP sessions, but for raw forwarding tests it streams stateless TCP-looking frames.'; } });
+    const fixed = items.reduce((a, p) => a + p[1], 0); const pay = Math.max(0, s - fixed);
+    items.forEach(p => { if (p[0] === 'Payload') p[1] = pay; });
+    items.forEach((p, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.style.background = p[2]; b.style.flex = `${p[0] === 'Payload' ? p[1] : 1} 1 0`; if (p[0] !== 'Payload') b.style.minWidth = '62px'; else b.style.minWidth = '70px';
+      b.textContent = `${p[0]} ${p[1]}B`; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', () => { box.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', 'true'); $('#pktInfo').innerHTML = `<b style="color:${p[2]}">${p[0]} · ${p[1]} bytes.</b> ${p[3]}`; });
+      box.appendChild(b);
+    });
+    if (!$('#pktInfo').textContent) $('#pktInfo').textContent = `One ${s} B frame as the load module builds it. Tap a field to see what it's for.`;
+  }
+  function renderStats(m) {
+    const loss = port.tx ? (port.tx - port.rx) / port.tx * 100 : 0;
+    const avg = port.latN ? port.latSum / port.latN : 0;
+    $('#ixStats').innerHTML = `<tr><td>P1 → P2</td><td>${fmt(Math.round(port.tx))}</td><td>${fmt(Math.round(port.rx))}</td><td class="${loss > .001 ? 'bad' : 'good'}">${loss.toFixed(3)}%</td><td>${avg ? avg.toFixed(2) + ' µs' : '—'}</td><td>${port.latMax ? port.latMax.toFixed(2) + ' µs' : '—'}</td></tr>` +
+      (ixCong ? `<tr><td style="color:#f0bc3a">P3 → P2 (bg)</td><td>${fmt(Math.round(port.tx * .35 / (ixRate / 100)))}</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>` : '');
+    const gb = pps => (pps * (m.s + 20) * 8 / 1e9).toFixed(2);
+    $('#ixOff').textContent = (ixOn ? gb(m.offeredPps) : '0.00') + ' Gbps'; $('#ixRx').textContent = (ixOn ? gb(m.rxPps) : '0.00') + ' Gbps';
+    $('#ixRx').style.color = ixOn && m.rxPps < m.offeredPps * .999 ? C.red : '';
+  }
+  const parts = [];
+  function drawIx(dt) {
+    const k = iK, { ctx, w, h } = k; const m = model();
+    ctx.fillStyle = C.bg; ctx.fillRect(0, 0, w, h);
+    const yA = h * .42, yB = h * .74, xI = 18, wI = Math.min(150, w * .24), xD = w / 2 - Math.min(80, w * .14), wD = Math.min(160, w * .28), xO = w - wI - 18;
+    const narrow = w < 560; const block = (x, y, bw, bh, t, sub, col) => { ctx.fillStyle = '#101b23'; ctx.strokeStyle = col; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.roundRect(x, y, bw, bh, 8); ctx.fill(); ctx.stroke(); ctx.fillStyle = C.white; ctx.font = (narrow ? '600 11px' : '600 13px') + ' JetBrains Mono, monospace'; ctx.fillText(t, x + 8, y + 22); if (!narrow) { ctx.fillStyle = C.text; ctx.font = '10.5px JetBrains Mono, monospace'; ctx.fillText(sub, x + 10, y + 40); } };
+    // wires
+    ctx.strokeStyle = 'rgba(63,224,234,.35)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(xI + wI, yA); ctx.lineTo(xD, yA); ctx.moveTo(xD + wD, yA); ctx.lineTo(xO, yA); if (ixCong) { ctx.moveTo(xI + wI, yB); ctx.lineTo(xD, yB); } ctx.stroke();
+    // particles
+    if (ixOn && !reduce) {
+      if (Math.random() < .25 + ixRate / 110) parts.push({ x: xI + wI, y: yA + (Math.random() - .5) * 8, stage: 0, bg: false, drop: Math.random() > m.rxPps / Math.max(1, m.offeredPps) });
+      if (ixCong && Math.random() < .5) parts.push({ x: xI + wI, y: yB + (Math.random() - .5) * 6, stage: 0, bg: true, drop: false });
+    }
+    const sp = 260 * dt;
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      if (p.stage === 0) { p.x += sp; if (p.x >= xD + 6) { if (p.drop) { p.stage = 9; p.vy = -60 - Math.random() * 60; } else if (p.bg) { p.stage = 1; p.y = yA + (Math.random() - .5) * 8; } else p.stage = 1; } }
+      else if (p.stage === 1) { p.x += sp * (m.util > .95 ? .45 : .8); if (p.x >= xD + wD) { p.stage = 2; } }
+      else if (p.stage === 2) { p.x += sp; if (p.x >= xO) { parts.splice(i, 1); continue; } }
+      else if (p.stage === 9) { p.y += p.vy * dt; p.vy += 400 * dt; p.x += sp * .2; if (p.y > h) { parts.splice(i, 1); continue; } }
+      ctx.fillStyle = p.stage === 9 ? C.red : p.bg ? C.amber : C.cyan;
+      const sz = ixSize === 'imix' ? 3 + (i % 3) * 2 : clamp(sizeOf() / 220, 2, 8);
+      ctx.fillRect(p.x - sz / 2, p.y - 2, sz, 4);
+    }
+    if (parts.length > 900) parts.splice(0, parts.length - 900);
+    block(xI, yA - 30, wI, 56, 'IXIA P1', 'Tx · stream 1', C.orange);
+    block(xD, h * .32, wD, h * .5, 'DUT', ixProto === 'l2' ? 'switch · L2' : 'router · L3', m.flapping ? C.red : C.cyan);
+    block(xO, yA - 30, wI, 56, 'IXIA P2', 'Rx · checks signature', C.orange);
+    if (ixCong) block(xI, yB - 22, wI, 44, 'IXIA P3', 'background', C.amber);
+    const qh = h * .5 - 58, qx = xD + wD - 26, qy = h * .32 + 48;
+    ctx.strokeStyle = '#2f4250'; ctx.strokeRect(qx + .5, qy + .5, 12, qh);
+    const fill = ixOn ? clamp(m.util, 0, 1) : 0; ctx.fillStyle = fill > .97 ? C.red : fill > .8 ? C.amber : C.green; ctx.fillRect(qx + 1, qy + qh * (1 - fill), 11, qh * fill);
+    ctx.fillStyle = C.text; ctx.font = '10.5px JetBrains Mono, monospace'; if (!narrow) ctx.fillText('queue', qx - 44, qy + 10);
+    if (m.flapping) { ctx.fillStyle = C.red; ctx.font = '600 13px JetBrains Mono, monospace'; ctx.fillText('LINK DOWN', xD + 10, h * .32 + 70); }
+    // counters
+    if (ixOn) {
+      const scale = 1; // real counts per second, accumulated
+      port.tx += m.offeredPps * dt * scale; port.rx += m.rxPps * dt * scale;
+      if (m.lat) { port.latSum += m.lat; port.latN++; port.latMax = Math.max(port.latMax, m.lat * (1 + Math.random() * .25)); }
+    }
+    renderStats(m);
+  }
+  function ixUi() { $('#ixState').textContent = ixOn ? 'TRANSMITTING' : 'IDLE'; $('#ixLed').style.background = ixOn ? C.green : C.text; $('#ixGo').textContent = ixOn ? '■ Stop traffic' : '▶ Start traffic'; }
+  $('#ixGo').addEventListener('click', () => { ixOn = !ixOn; if (ixOn) Object.assign(port, { tx: 0, rx: 0, latSum: 0, latN: 0, latMax: 0 }); ixUi(); });
+  $('#ixF').addEventListener('change', e => { ixSize = e.target.value === 'imix' ? 'imix' : +e.target.value; $('#pktInfo').textContent = ''; renderPkt(); });
+  $('#ixR').addEventListener('input', e => { ixRate = +e.target.value; $('#ixRo').textContent = ixRate + '%'; });
+  $('#ixP').addEventListener('change', e => { ixProto = e.target.value; $('#pktInfo').textContent = ''; renderPkt(); });
+  $('#ixCong').addEventListener('click', e => { ixCong = !ixCong; e.currentTarget.setAttribute('aria-pressed', ixCong); });
+  $('#ixFlap').addEventListener('click', () => { flapUntil = performance.now() + 900; if (!ixOn) { ixOn = true; ixUi(); } });
+  let rfcRunning = false;
+  $('#ixRfc').addEventListener('click', async e => {
+    if (rfcRunning) return; rfcRunning = true; const b = e.currentTarget; b.disabled = true;
+    const body = $('#rfcBody'); body.innerHTML = '';
+    const prevCong = ixCong; ixCong = false; $('#ixCong').setAttribute('aria-pressed', 'false');
+    ixOn = true; ixUi();
+    for (const s of [64, 128, 256, 512, 1024, 1518]) {
+      ixSize = s; $('#ixF').value = [64, 128, 512, 1518].includes(s) ? String(s) : $('#ixF').value; renderPkt();
+      let lo = 0, hi = 100, best = 0;
+      for (let it = 0; it < 7; it++) {
+        const r = it === 0 ? 100 : (lo + hi) / 2; ixRate = Math.round(r * 10) / 10; $('#ixR').value = ixRate; $('#ixRo').textContent = ixRate + '%';
+        const m = model(); const lossless = m.rxPps >= m.offeredPps * .99999;
+        if (lossless) { best = r; lo = r; if (it === 0) break; } else hi = r;
+        await sleep(160);
+      }
+      const mpps = linePps(s) * best / 100 / 1e6;
+      const tr = document.createElement('tr'); tr.innerHTML = `<td>${s} B</td><td class="${best < 99.9 ? 'bad' : 'good'}">${best.toFixed(1)}%</td><td>${mpps.toFixed(2)}</td>`; body.appendChild(tr);
+    }
+    ixCong = prevCong; $('#ixCong').setAttribute('aria-pressed', ixCong);
+    const note = document.createElement('tr'); note.innerHTML = `<td colspan="3" style="text-align:left;color:var(--muted);white-space:normal">64 B frames top out near ${(DUT_PPS / linePps(64) * 100).toFixed(0)}%: the simulated DUT forwards at most 12.2 Mpps, and 10G line rate at 64 B is 14.88 Mpps.</td>`; body.appendChild(note);
+    b.disabled = false; rfcRunning = false;
+  });
+  renderPkt(); ixUi();
+
+  /* ================= CI/CD ================= */
+  const STG = [['Commit', 'git push · merge request'], ['Build', 'firmware + test package'], ['Unit tests', 'fast, no hardware'], ['RF bench', 'runner tag: rf-bench'], ['Staging', 'staging hosts · soak'], ['Release', 'tag + rollout']];
+  const pipeEl = $('#pipe');
+  STG.forEach(([t, d], i) => { const el = document.createElement('div'); el.className = 'stg'; el.innerHTML = `<span class="st"></span><div class="n">0${i + 1}</div><h4>${t}</h4><p>${d}</p>`; pipeEl.appendChild(el); });
+  const stgs = [...pipeEl.children]; const term = $('#ciTerm');
+  const say = (cls, t) => logTo(term, cls, t);
+  let ciBusy = false;
+  const setStg = (i, s) => { stgs[i].className = 'stg' + (s ? ' ' + s : ''); };
+  async function runStage(i, lines, ok = true) {
+    setStg(i, 'run'); for (const [c, t, d] of lines) { say(c, t); await sleep(d || 380); } setStg(i, ok ? 'ok' : 'fail'); return ok;
+  }
+  async function ci(sc) {
+    if (ciBusy) return; ciBusy = true; term.innerHTML = ''; stgs.forEach((_, i) => setStg(i, ''));
+    document.querySelectorAll('.pipe-ctl button').forEach(b => b.disabled = true);
+    const sha = Math.random().toString(16).slice(2, 9);
+    $('#ciHint').textContent = { pass: 'scenario: clean run', dut: 'scenario: the firmware broke something', bench: 'scenario: the bench broke, not the firmware' }[sc];
+    await runStage(0, [['s', `$ git push origin feature/wifi-roam-fix   # ${sha}`], ['c', 'pipeline #4812 created · 6 stages']]);
+    await runStage(1, [['k', '[build] make firmware TARGET=dut-a', 300], ['g', '[build] artifact fw-' + sha + '.bin (14.2 MB) ✓']]);
+    await runStage(2, [['k', '[unit] pytest tests/unit -q'], ['g', '[unit] 412 passed in 38.1s ✓']]);
+    // RF bench
+    if (sc === 'bench') {
+      await runStage(3, [['k', '[rf_bench] runner rf-bench-07 · python bench/check_path_loss.py'], ['b', '[rf_bench] path loss 46.8 dB, expected 43.0 ± 1.0 dB ✗', 500], ['w', '[rf_bench] fault is in the BENCH, not the build: quarantining rf-bench-07'], ['c', '[rf_bench] ticket filed: "rf-bench-07 cable drift +3.8 dB, re-sweep with VNA"']], false);
+      await sleep(500);
+      say('s', '↻ retry on rf-bench-03 (same tag, healthy station)');
+      await runStage(3, [['k', '[rf_bench] check_path_loss.py → 43.2 dB ✓'], ['k', '[rf_bench] flash_dut.py --build ' + sha + ' ✓'], ['k', '[rf_bench] rate-vs-range 0→80 dB … 41 steps'], ['g', '[rf_bench] 58 passed · throughput within 3% of baseline ✓']]);
+    } else if (sc === 'dut') {
+      await runStage(3, [['k', '[rf_bench] runner rf-bench-03 · check_path_loss.py → 43.1 dB ✓'], ['k', '[rf_bench] flash_dut.py --build ' + sha + ' ✓'], ['k', '[rf_bench] roam test AP-1 → AP-2 …', 500], ['b', '[rf_bench] FAIL test_roam_no_disconnect: link dropped 2.4 s at ATT 52 dB ✗'], ['b', '[rf_bench] FAIL test_rvr: -31% throughput at 60 dB vs baseline ✗'], ['w', '[rf_bench] bench healthy + 2 known-good builds pass → regression is in the firmware'], ['c', '[rf_bench] bug filed with logs, pcap and RvR curve attached → assigned to wifi-driver team']], false);
+      say('b', '✗ pipeline #4812 failed at rf_bench · staging and release skipped');
+      done(); return;
+    } else {
+      await runStage(3, [['k', '[rf_bench] runner rf-bench-03 · check_path_loss.py → 43.0 dB ✓'], ['k', '[rf_bench] flash_dut.py --build ' + sha + ' ✓'], ['k', '[rf_bench] sensitivity, rate-vs-range, roam, BT coex …', 500], ['g', '[rf_bench] 58 passed · junit report uploaded ✓']]);
+    }
+    await runStage(4, [['k', '[staging] deploy.py --env staging-hosts (24 devices)'], ['k', '[staging] firmware validation on Android TV, Chromecast, Roku …', 500], ['g', '[staging] 6 h soak: 0 crashes, 0 disconnects ✓']]);
+    await runStage(5, [['g', `[release] tagged v2.18.0 (${sha}) · rollout 1% → 10% → 100%`]]);
+    say('g', '✓ pipeline #4812 passed');
+    done();
+  }
+  function done() { ciBusy = false; document.querySelectorAll('.pipe-ctl button').forEach(b => b.disabled = false); }
+  $('#ciGo').addEventListener('click', () => ci(['pass', 'dut', 'bench'][Math.floor(Math.random() * 3)]));
+  document.querySelectorAll('[data-sc]').forEach(b => b.addEventListener('click', () => ci(b.dataset.sc)));
+
+  /* ================= main loop ================= */
+  let last = performance.now(), saAcc = 0;
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (sgK.on()) { sgT += dt * 2.4; drawSg(); }
+    saAcc += dt; if (saK.on() && saAcc > (reduce ? .6 : .09)) { saAcc = 0; saPhase += .25; drawSa(); }
+    if (aK.on()) { if (!atSweep && Math.random() < .08) lastAt = atState(), atRead(); drawAt(); }
+    if (iK.on()) drawIx(dt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  addEventListener('resize', () => { [sgK, saK, vK, aK, iK].forEach(k => k.size()); drawSg(); drawSa(); drawVna(); drawAt(); drawIx(0); });
+  // first paint for static screens
+  drawSg(); drawSa(); drawAt(); drawIx(0);
+})();
+</script>
+</body>
+</html>

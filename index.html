@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Ibraham Mustafa: data center and lab infrastructure, Linux deployment, network and wireless validation, and lab automation. 8+ years at Google, Apple, AWS, Cisco, and Broadcom.">
+<meta name="description" content="Ibraham Mustafa: RF and wireless test, data center and lab infrastructure, network validation, Python test automation and CI/CD. 8+ years at Google, Apple, AWS, Cisco, and Broadcom.">
 <meta name="theme-color" content="#0b1218">
 <title>Ibraham Mustafa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -364,7 +364,21 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
 .wifi, .topo, .console, .layer-panel, .term, .rack, .pcap { border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
 ::view-transition-old(layerpanel), ::view-transition-new(layerpanel), ::view-transition-old(roledetail), ::view-transition-new(roledetail), ::view-transition-old(npanel), ::view-transition-new(npanel) { animation-duration: .35s; animation-timing-function: var(--ease); }
 
+/* ---------- RF bench teaser ---------- */
+.benchgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.bcard { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 12px; background: var(--steel); color: var(--unit-text); text-decoration: none; border: 1px solid color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; min-width: 0; transition: transform .3s var(--ease), box-shadow .3s; }
+.bcard:hover { transform: translateY(-3px); box-shadow: 0 24px 40px -24px rgba(5,12,18,.8); }
+.bcard .bn { font-family: var(--font-mono); font-size: 11px; color: #8fa0ad; letter-spacing: .1em; }
+.bcard h3 { font-size: 26px; text-transform: uppercase; color: #fff; }
+.bcard p { margin: 0; font-size: 14px; color: #a9b8c3; }
+.bcard svg { width: 100%; height: 64px; display: block; }
+.bcard .go { font-family: var(--font-mono); font-size: 12px; color: #3fe0ea; margin-top: auto; }
+.bcard .used { font-family: var(--font-mono); font-size: 11px; color: #ffb37a; }
+.bench-cta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+.bench-cta span { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
 @media (max-width: 1000px) {
+  .benchgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero, .topo, .hs, .stack, .datacenter, .sys, .contact { grid-template-columns: minmax(0, 1fr); }
   .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .stat:nth-child(3n) { border-right: 0; }
@@ -387,6 +401,7 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
   .stat:nth-child(-n+4) { border-bottom: 1px solid var(--line); }
   .stat b { font-size: 32px; }
   .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .benchgrid { grid-template-columns: minmax(0, 1fr); }
   .unit .vents, .unit .co small { display: none; }
   .rack { padding: 12px 20px; }
   .topo { padding: 10px; }
@@ -417,7 +432,7 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
     <a class="brand" href="#top">IBRAHAM<span>.</span>MUSTAFA</a>
     <nav class="secnav" aria-label="Sections" id="secnav">
       <span class="pill" id="navpill"></span>
-      <a href="#topology">Topology</a><a href="#handshake">802.11</a><a href="#stack">Stack</a><a href="#rack">Experience</a><a href="#system">AI lab</a><a href="#contact">Contact</a>
+      <a href="#topology">Topology</a><a href="#handshake">802.11</a><a href="#stack">Stack</a><a href="#rack">Experience</a><a href="#system">AI lab</a><a href="#bench">RF bench</a><a href="#contact">Contact</a>
     </nav>
     <span class="chip"><span class="led"></span>Available now · Bay Area</span>
     <button class="theme-btn" type="button" id="themeBtn" aria-label="Toggle light or dark theme">
@@ -430,15 +445,16 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
   <div class="wrap">
     <div class="hero" id="hero">
       <div>
-        <div class="eyebrow">Lab &amp; data center infrastructure · Network &amp; wireless validation · Automation</div>
+        <div class="eyebrow">RF &amp; wireless test · Lab &amp; data center infrastructure · Automation &amp; CI/CD</div>
         <h1 id="heroTitle">Every packet, <em>accounted for.</em></h1>
-        <p class="lede">I'm Ibraham, an infrastructure and test engineer with 8+ years at Google, Apple, AWS, Cisco and Broadcom. I take labs from bare metal to production: racks, redundant power and networking, PXE-imaged Linux hosts, GPU servers, and the Python that keeps a 5,000-device lab healthy on its own. I've also tested Wi-Fi in RF chambers, run Bluetooth interop against every major car maker, and built Nexus testbeds with Ixia traffic generators.</p>
+        <p class="lede">I'm Ibraham, an infrastructure and test engineer with 8+ years at Google, Apple, AWS, Cisco and Broadcom. I take labs from bare metal to production: racks, redundant power and networking, PXE-imaged Linux hosts, GPU servers, and the Python that keeps a 5,000-device lab healthy on its own. I've also run Wi-Fi and Bluetooth testing in RF chambers, kept Jenkins and GitLab test jobs running, and deployed Ixia traffic generators at Cisco.</p>
         <div class="cta">
           <a class="btn sig" href="#topology">Explore the network</a>
+          <a class="btn ghost" href="lab.html">Open the RF lab ↗</a>
           <a class="btn ghost" href="#contact">Get in touch</a>
         </div>
         <div class="badges">
-          <span class="badge">Linux · PXE</span><span class="badge">Rack &amp; stack</span><span class="badge">GPU servers</span><span class="badge">OSPF · BGP</span><span class="badge">IEEE 802.11</span><span class="badge">Python · Ansible</span><span class="badge">CCNA</span>
+          <span class="badge">RF chambers</span><span class="badge">Attenuators · Sig gen</span><span class="badge">Jenkins · GitLab CI</span><span class="badge">Linux · PXE</span><span class="badge">Rack &amp; stack</span><span class="badge">GPU servers</span><span class="badge">OSPF · BGP</span><span class="badge">IEEE 802.11</span><span class="badge">Python · Ansible</span><span class="badge">CCNA</span>
         </div>
       </div>
 
@@ -627,15 +643,37 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
     </div>
   </section>
 
+  <!-- ===================== RF BENCH ===================== -->
+  <section id="bench">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <div class="eyebrow">New · interactive lab</div>
+          <h2>The RF &amp; traffic bench</h2>
+          <p>Six live instruments you can operate: the gear behind RF chamber testing, network validation and hardware-in-the-loop CI. Each one explains what it does and where I've used it.</p>
+        </div>
+      </div>
+      <div class="benchgrid reveal">
+        <a class="bcard" href="lab.html#siggen"><span class="bn">01 · STIMULUS</span><h3>Signal generator</h3><svg viewBox="0 0 300 64" aria-hidden="true"><path d="M0 32 Q10 6 20 32 T40 32 T60 32 T80 32 T100 32 T120 32 T140 32 T160 32 T180 32 T200 32 T220 32 T240 32 T260 32 T280 32 T300 32" fill="none" stroke="#3fe0ea" stroke-width="2"/></svg><p>Find receiver sensitivity with a scripted power sweep over SCPI.</p><span class="used">Used at Apple · RF chambers</span><span class="go">Operate →</span></a>
+        <a class="bcard" href="lab.html#spectrum"><span class="bn">02 · MEASUREMENT</span><h3>Spectrum analyzer</h3><svg viewBox="0 0 300 64" aria-hidden="true"><path d="M0 58 L20 56 L28 18 L70 18 L78 56 L110 57 L114 10 L118 57 L150 56 L156 22 L198 22 L206 57 L232 56 L236 14 L240 57 L300 58" fill="none" stroke="#a596ff" stroke-width="2"/></svg><p>Watch Wi-Fi, Bluetooth hopping and a microwave oven share 2.4 GHz.</p><span class="go">Operate →</span></a>
+        <a class="bcard" href="lab.html#vna"><span class="bn">03 · CHARACTERIZATION</span><h3>Network analyzer</h3><svg viewBox="0 0 300 64" aria-hidden="true"><path d="M0 10 C40 12 60 10 80 14 C100 18 110 60 120 58 C130 56 140 16 160 14 C200 12 220 14 230 18 C240 22 248 48 256 46 C264 44 270 14 300 12" fill="none" stroke="#ffb37a" stroke-width="2"/></svg><p>Sweep cables and antennas: S11, S21, VSWR and a pass/fail call.</p><span class="go">Operate →</span></a>
+        <a class="bcard" href="lab.html#atten"><span class="bn">04 · SIMULATED DISTANCE</span><h3>Attenuators</h3><svg viewBox="0 0 300 64" aria-hidden="true"><path d="M0 8 L70 8 L90 14 L110 20 L140 32 L160 42 L190 52 L220 58 L300 58" fill="none" stroke="#3fe0ea" stroke-width="2"/><g fill="#3fe0ea"><circle cx="70" cy="8" r="3"/><circle cx="140" cy="32" r="3"/><circle cx="220" cy="58" r="3"/></g></svg><p>Draw a rate-vs-range curve and force a roam between two APs.</p><span class="used">Used at Chrome OS · ~1,000 Chromebooks</span><span class="go">Operate →</span></a>
+        <a class="bcard" href="lab.html#ixia"><span class="bn">05 · NETWORK TRAFFIC</span><h3>Ixia</h3><svg viewBox="0 0 300 64" aria-hidden="true"><rect x="2" y="20" width="60" height="26" rx="5" fill="none" stroke="#ffb37a"/><rect x="120" y="12" width="60" height="42" rx="5" fill="none" stroke="#3fe0ea"/><rect x="238" y="20" width="60" height="26" rx="5" fill="none" stroke="#ffb37a"/><g fill="#3fe0ea"><rect x="72" y="31" width="8" height="4"/><rect x="88" y="31" width="8" height="4"/><rect x="104" y="31" width="8" height="4"/><rect x="190" y="31" width="8" height="4"/><rect x="206" y="31" width="8" height="4"/><rect x="222" y="31" width="8" height="4"/></g></svg><p>Generate line-rate traffic, congest the switch and run RFC 2544.</p><span class="used">Used at Cisco · switch &amp; router validation</span><span class="go">Operate →</span></a>
+        <a class="bcard" href="lab.html#cicd"><span class="bn">06 · EVERY BUILD</span><h3>CI/CD on hardware</h3><svg viewBox="0 0 300 64" aria-hidden="true"><g fill="none" stroke-width="2"><circle cx="20" cy="32" r="9" stroke="#3fc275"/><circle cx="72" cy="32" r="9" stroke="#3fc275"/><circle cx="124" cy="32" r="9" stroke="#3fc275"/><circle cx="176" cy="32" r="9" stroke="#ff5d5d"/><circle cx="228" cy="32" r="9" stroke="#5f7484"/><circle cx="280" cy="32" r="9" stroke="#5f7484"/><path d="M29 32 H63 M81 32 H115 M133 32 H167 M185 32 H219 M237 32 H271" stroke="#5f7484"/></g></svg><p>Push a commit and watch it reach the RF bench, staging and release.</p><span class="used">Jenkins &amp; GitLab at Apple</span><span class="go">Operate →</span></a>
+      </div>
+      <div class="bench-cta reveal"><a class="btn sig" href="lab.html">Open the full RF lab ↗</a><span>Simulated instruments · real workflows</span></div>
+    </div>
+  </section>
+
   <!-- ===================== CONTACT ===================== -->
   <section id="contact">
     <div class="wrap contact">
       <div class="reveal">
         <div class="eyebrow">Contact</div>
         <h2>Let's validate your next release</h2>
-        <p style="color:var(--muted);max-width:52ch">I'm looking for data center and AI infrastructure, Linux deployment, network engineering, wireless test and lab automation roles in the Bay Area. Contract and full-time both work, and I can start immediately.</p>
+        <p style="color:var(--muted);max-width:52ch">I'm looking for RF and wireless test, QA automation, data center and AI infrastructure, network engineering and lab automation roles in the Bay Area. Contract and full-time both work, and I can start immediately.</p>
         <div class="targets">
-          <span class="tag">AI &amp; data center infrastructure</span><span class="tag">Linux deployment</span><span class="tag">Wi-Fi test &amp; integration</span><span class="tag">WLAN / Bluetooth validation</span><span class="tag">Network test</span><span class="tag">Test automation (Python)</span><span class="tag">Hardware test &amp; lab ops</span><span class="tag">Data center infrastructure</span>
+          <span class="tag">RF &amp; wireless test</span><span class="tag">QA automation &amp; CI/CD</span><span class="tag">AI &amp; data center infrastructure</span><span class="tag">Linux deployment</span><span class="tag">Wi-Fi test &amp; integration</span><span class="tag">WLAN / Bluetooth validation</span><span class="tag">Network test</span><span class="tag">Test automation (Python)</span><span class="tag">Hardware test &amp; lab ops</span><span class="tag">Data center infrastructure</span>
         </div>
       </div>
       <div class="cards reveal" style="--d:.1s">
@@ -728,8 +766,9 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
         'Administered Debian hosts (systemctl, apt, cron, lsmod, dmesg), provisioned them with Ansible, tested kernel releases, and managed Dell firmware through iDRAC.',
         'Built a Python lab-health system that classifies every host and device as OK, degraded or failed, auto-recovers failures, and files ~30 prioritized bugs a week.',
         'Automated a daily lab-health report (PCIe links, OS images, drive capacity), saving ~10 hours of manual triage a week.',
+        'Built RF-shielded racks with programmable attenuators to isolate Roku, RDK and Android TV, and Chromecast devices, and configured staging hosts for firmware validation on Android smart TVs.',
         'Scaled lab capacity for the Android Messages, Pixel Watch and cellular testing teams, and built remote iOS device control on macOS hosts.'],
-      skills: ['racks', 'cabling', 'linux', 'docker', 'python', 'ai', 'hostmon', 'reports', 'vlan', 'rca'] },
+      skills: ['racks', 'cabling', 'linux', 'docker', 'python', 'ai', 'hostmon', 'reports', 'vlan', 'rca', 'rf', 'atten', 'staging', 'firmware'] },
     { id: 'devsup', co: 'Google', via: 'via Accenture', title: 'Developer Technical Support SME', loc: 'Mountain View, CA', yrs: '2023–25', months: 17, ssid: 'Google-Play-Partners', band: '5 GHz',
       bullets: ['Served as subject-matter expert for strategic Google Play partners, including Roku, Meta and Microsoft, handling ~40 escalated tickets a week with a 3-hour response time.',
         'Closed 95% of tickets without engineering escalation by tracing root causes through partner code, SDK and API integrations, and logs.',
@@ -739,19 +778,20 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
     { id: 'apple', co: 'Apple', via: 'via Accenture', title: 'QA Test Engineer', loc: 'Cupertino, CA', yrs: '2023', months: 9, ssid: 'Apple-BT-Interop', band: '2.4 GHz',
       bullets: ['Ran ~50 Bluetooth interoperability test cases per cycle (HFP, A2DP, AVRCP) against infotainment head units from every major automaker, from Kia to Ferrari.',
         'Tested CarPlay head-unit integration and isolated whether failures came from the phone, the head unit or the vehicle side, including its CAN bus link.',
-        'Tested Wi-Fi performance in RF chambers with PoE access points, updating iOS firmware before each test cycle.'],
-      skills: ['bluetooth', 'wifi', 'rf', 'firmware', 'logs', 'testplans'] },
+        'Executed existing automated test suites, wrote new test cases in the team\'s automation framework, and ran and monitored Jenkins and GitLab jobs.',
+        'Tested Wi-Fi and Bluetooth performance in RF chambers with PoE access points and signal generators, updating iOS firmware before each test cycle.'],
+      skills: ['bluetooth', 'wifi', 'rf', 'siggen', 'ci', 'firmware', 'logs', 'testplans'] },
     { id: 'youtube', co: 'YouTube', via: 'via Accenture', title: 'QA Test Engineer', loc: 'Remote', yrs: '2022–23', months: 10, ssid: 'YouTube-SmartHome', band: '5 GHz',
       bullets: ['Tested YouTube experiences across smart displays (Amazon Echo), Android, ChromeOS, iPhone, Apple Watch, and Pixel and Fitbit watches.',
         'Designed and ran device test cases with ADB across TUT, FIT, SIT and UAT stages.'],
       skills: ['adb', 'android', 'testplans'] },
     { id: 'fitbit', co: 'Fitbit', via: 'via TEKsystems', title: 'QA Test Engineer', loc: 'Remote', yrs: '2021–22', months: 9, ssid: 'Fitbit-WearOS', band: '2.4 GHz',
-      bullets: ['Validated exercise-detection and fitness-tracking algorithms by running structured exercise data collections, analyzing results and presenting findings to engineering.', 'Updated device firmware before each validation run and wrote test plans within Agile sprints.'],
-      skills: ['firmware', 'testplans', 'linux', 'android'] },
+      bullets: ['Validated exercise-detection and fitness-tracking algorithms by running structured exercise data collections, analyzing results and presenting findings to engineering.', 'Worked with data scientists to trace bugs found in data analysis, fixed them in code, and validated the fixes in a staging environment before release.', 'Updated device firmware before each validation run and wrote test plans within Agile sprints.'],
+      skills: ['firmware', 'testplans', 'linux', 'android', 'staging', 'python'] },
     { id: 'chromeos', co: 'Google', via: 'Chrome OS · via Tezerakt', title: 'HW Test Engineer, Chrome OS', loc: 'Mountain View, CA', yrs: '2020–21', months: 12, ssid: 'ChromeOS-RF-Chamber', band: '6 GHz',
-      bullets: ['Automated Chromebook bring-up with Python and Bash, driving servos to power-cycle, flash, reset and connect devices to Wi-Fi based on each device\'s state.', 'Built and maintained 500+ automated testbeds used by 3 labs through EVT, DVT and PVT.',
+      bullets: ['Automated Chromebook bring-up with Python and Bash, driving servos to power-cycle, flash, reset and connect devices to Wi-Fi based on each device\'s state.', 'Supported a lab of ~1,000 Chromebooks in RF chambers behind programmable attenuators, each driven remotely through a servo board for firmware and Wi-Fi chipset validation.', 'Built and maintained 500+ automated testbeds used by 3 labs through EVT, DVT and PVT.',
         'Designed a 4-shelf camera testbed that doubled rack capacity from 8 to 16 devices, then built 25 production units.', 'Updated Chromebook firmware and soldered OTA and conductive Wi-Fi RF test hardware.'],
-      skills: ['wifi', 'rf', 'testbeds', 'evt', 'python', 'bash', 'tcpip', 'firmware'] },
+      skills: ['wifi', 'rf', 'atten', 'testbeds', 'evt', 'python', 'bash', 'tcpip', 'firmware', 'cpp'] },
     { id: 'stadia', co: 'Google', via: 'Stadia · via Embedded Resource Group', title: 'Lab Administrator, Stadia', loc: 'Mountain View, CA', yrs: '2019–20', months: 18, ssid: 'Stadia-GPU-Lab', band: '5 GHz',
       bullets: ['Ran GPU video-encoding and dogfood labs of 150+ servers and 300+ GPUs supporting a dozen-plus dogfood testers.', 'Installed and adapted GPUs for Dell servers, kept GPU drivers and firmware current, and updated server BIOS.',
         'Verified firmware on 1,000+ Stadia controllers and Chromecast devices, and configured lab networks (VLANs, switches, emulation routers) with NetOps.'],
@@ -760,7 +800,7 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
       bullets: ['Validated ~12 racks a day across SFO data center clusters for encrypted traffic and hardware compliance, verifying routing, fiber mapping and ToR connectivity.', 'Troubleshot physical and data-link layer issues and upgraded servers and cabling.'],
       skills: ['fiber', 'dc', 'linux', 'tcpip', 'routing'] },
     { id: 'cisco', co: 'Cisco', via: 'Cisco Systems · via Wipro', title: 'Lab Administrator', loc: 'San Jose, CA', yrs: '2018–19', months: 6, ssid: 'Cisco-Nexus-Lab', band: 'wired',
-      bullets: ['Maintained 50+ QA testbeds built on UCS servers, Nexus 9K/7K switches, TFTP servers and Ixia traffic generators.', 'Wrote the provisioning script that imaged servers, applied network configuration and connected them to Ixia for traffic simulation.', 'Implemented OSPF, EIGRP, BGP, OTV, vPC and FabricPath and gave Layer 1–3 support to network engineers.'],
+      bullets: ['Maintained 50+ QA testbeds built on UCS servers, Nexus 9K/7K switches, TFTP servers and Ixia traffic generators.', 'Configured and deployed Ixia traffic generators across the test network to simulate traffic for switch and router validation.', 'Wrote the provisioning script that imaged servers, applied network configuration and connected them to Ixia.', 'Implemented OSPF, EIGRP, BGP, OTV, vPC and FabricPath and gave Layer 1–3 support to network engineers.'],
       skills: ['routing', 'tcpip', 'traffic', 'bash', 'racks'] },
     { id: 'broadcom', co: 'Broadcom', via: 'Broadcom Inc. · via EMR CPR', title: 'Lead Data Center Technician', loc: 'San Jose, CA', yrs: '2018', months: 6, ssid: 'Broadcom-DC-Migration', band: 'wired',
       bullets: ['Led 4 technicians in migrating 50+ racks across 3 sites, tracking every rack and its equipment in a database.',
@@ -769,9 +809,9 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
   ];
   const roleById = id => ROLES.find(r => r.id === id);
   const GROUPS = [
-    { name: 'Wireless & RF', skills: [['wifi', 'Wi-Fi / 802.11'], ['bluetooth', 'Bluetooth (HFP/A2DP/AVRCP)'], ['rf', 'RF chambers, OTA & conductive'], ['iperf', 'iPerf throughput'], ['wfa', 'WFA certification scripts'], ['firmware', 'Firmware validation']] },
+    { name: 'Wireless & RF', skills: [['wifi', 'Wi-Fi / 802.11'], ['bluetooth', 'Bluetooth (HFP/A2DP/AVRCP)'], ['rf', 'RF chambers & shielded racks'], ['atten', 'Programmable attenuators'], ['siggen', 'Signal generators'], ['iperf', 'iPerf throughput'], ['wfa', 'WFA certification scripts'], ['firmware', 'Firmware validation']] },
     { name: 'Networking', skills: [['tcpip', 'TCP/IP'], ['routing', 'OSPF / BGP / MPLS'], ['vlan', 'VLAN & lab networks'], ['traffic', 'Ixia traffic generation'], ['wireshark', 'Wireshark']] },
-    { name: 'Automation & AI', skills: [['python', 'Python'], ['ai', 'AI-assisted monitoring'], ['bash', 'Bash / shell'], ['ci', 'Jenkins / CI pipelines'], ['yaml', 'YAML orchestration'], ['reports', 'Health reports']] },
+    { name: 'Automation & AI', skills: [['python', 'Python'], ['ai', 'AI-assisted monitoring'], ['bash', 'Bash / shell'], ['ci', 'Jenkins / GitLab CI'], ['staging', 'Staging validation'], ['yaml', 'YAML orchestration'], ['reports', 'Health reports']] },
     { name: 'Test & debug', skills: [['testbeds', 'Automated testbeds'], ['evt', 'EVT / DVT / PVT'], ['testplans', 'Test plans'], ['rca', 'Root-cause analysis'], ['logs', 'Log analysis'], ['hostmon', 'Host health checks'], ['tickets', 'Support tickets']] },
     { name: 'Infrastructure', skills: [['racks', 'Rack & server deployment'], ['cabling', 'Structured cabling'], ['fiber', 'LC fiber & ToR'], ['dc', 'Data center ops'], ['docs', 'Documentation']] },
     { name: 'Platforms', skills: [['android', 'Android'], ['adb', 'ADB'], ['linux', 'Linux / Unix'], ['kotlin', 'Kotlin / Java'], ['cpp', 'C++'], ['docker', 'Docker / Kubernetes']] },
@@ -844,7 +884,7 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
     r1: { t: 'Core router R1', d: 'Primary path north. OSPF neighbors with R2 and the switch; BGP to the WAN.', b: ['Implemented OSPF, EIGRP, BGP, MPLS, OTV, vPC and FabricPath in Cisco QA testbeds.', 'Gave Layer 1–3 support to network engineers and re-imaged network devices.'], k: ['OSPF', 'BGP', 'MPLS', 'EIGRP', 'CCNA'], r: ['cisco'] },
     r2: { t: 'Core router R2', d: 'The redundant path. Drop R1 and traffic reconverges through here.', b: ['Built redundant routed testbeds so failover could be tested on purpose, not discovered by accident.', 'Degrees in IS/IT with a concentration in network routing and switching.'], k: ['Failover', 'OSPF reconvergence', 'Redundancy'], r: ['cisco'] },
     sw: { t: 'Nexus 9K switch', d: 'Aggregation for APs, traffic generators and the automation host, with VLANs per test bed.', b: ['Built and maintained QA testbeds with Nexus 9K/7K switches and UCS servers.', 'Set up lab networks at Stadia: Ethernet port traces, VLANs, switch configs with NetOps.', 'Deployed servers, switches and rack cabling for a ~5,000-device lab at Google.'], k: ['Nexus 9K/7K', 'UCS', 'VLAN', 'vPC', 'Rack & stack'], r: ['cisco', 'stadia', 'bayside'] },
-    gen: { t: 'iPerf / Ixia traffic generator', d: 'Pushes known traffic so throughput, latency and loss can be measured, not guessed.', b: ['Built Cisco testbeds around Ixia traffic generators.', 'Throughput testing with iPerf across Wi-Fi clients and access points.', 'Hit "Run iPerf" to push traffic to every client in the chamber.'], k: ['iPerf3', 'Ixia', 'TCP/UDP', 'Throughput', 'Latency'], r: ['cisco', 'chromeos'] },
+    gen: { t: 'iPerf / Ixia traffic generator', d: 'Pushes known traffic so throughput, latency and loss can be measured, not guessed.', b: ['Configured and deployed Ixia traffic generators across Cisco test networks to validate switches and routers.', 'Throughput testing with iPerf across Wi-Fi clients and access points.', 'Hit "Run iPerf" to push traffic to every client in the chamber.'], k: ['iPerf3', 'Ixia', 'TCP/UDP', 'Throughput', 'Latency'], r: ['cisco', 'chromeos'] },
     ci: { t: 'Automation host', d: 'Python and Jenkins drive the lab: flash, configure, test, collect, report.', b: ['Python scripts flash devices at scale and batch-pull IMEI, phone numbers and Wi-Fi chipset properties.', 'AI-assisted monitoring auto-recovers devices and files ~30 prioritized bugs a week.', 'Servo-driven Bash/Python bring-up at Chrome OS: power-cycle, flash, reset and connect devices automatically.'], k: ['Python', 'Ansible', 'Bash', 'PXE', 'ADB', 'Buganizer'], r: ['bayside', 'chromeos'] },
     ap1: { t: 'Access point 1 · 5 GHz', d: '802.11ax on channel 36, 80 MHz, WPA2/WPA3. Serves the phone and Chromebook.', b: ['Tested Wi-Fi performance and deployment scenarios with PoE access points at Apple.', 'Chromebook Wi-Fi functionality testing through EVT, DVT and PVT.'], k: ['802.11ax', 'PoE', 'WPA3', 'Roaming', 'Channel planning'], r: ['apple', 'chromeos'] },
     ap2: { t: 'Access point 2 · 6 GHz', d: 'Second cell for roaming and band tests. Serves the watch and controller.', b: ['Roam a client between APs to watch a fast-transition reassociation.', 'Firmware validation on 1,000+ Stadia Wi-Fi/BT controllers before they reached test teams.'], k: ['6 GHz', '802.11r', 'Band steering', 'Interop'], r: ['stadia', 'chromeos'] },
@@ -1110,17 +1150,17 @@ footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 13px
       bullets: ['Pulled and terminated CAT5/CAT6 to patch panels and distribution frames during a multi-site data center migration.', 'Ran 24/48-pair LC fiber into patch panels between racks up to 150 feet apart.', 'Deployed servers, switches and rack cabling for a ~5,000-device lab at Google.'],
       kit: ['CAT5/CAT6', 'LC fiber', 'Patch panels', 'KVM', 'Rack & stack'], roles: ['broadcom', 'bayside', 'stadia'] },
     { k: 'RF', name: 'RF & wireless', tag: 'Wi-Fi, Bluetooth, chambers', color: '--sig', sub: 'Google Chrome OS · Apple · Google Stadia · Fitbit',
-      bullets: ['Wi-Fi functionality testing for Chromebooks through EVT, DVT and PVT; soldered and validated OTA and conductive RF setups.', 'Bluetooth HFP, A2DP and AVRCP interop against nearly every major automotive OEM, Kia to Ferrari.', 'Wi-Fi performance testing in RF chambers with PoE access points; iPerf throughput and Wireshark captures.', 'Firmware validation on 1,000+ Stadia Wi-Fi/BT controllers; Wear OS firmware validation at Fitbit.'],
-      kit: ['IEEE 802.11', 'WLAN/BT', 'RF chambers', 'iPerf', 'Wireshark', 'WFA scripts'], roles: ['chromeos', 'apple', 'stadia', 'fitbit'] },
+      bullets: ['Wi-Fi functionality testing for Chromebooks through EVT, DVT and PVT; soldered and validated OTA and conductive RF setups.', 'Bluetooth HFP, A2DP and AVRCP interop against nearly every major automotive OEM, Kia to Ferrari.', 'Wi-Fi and Bluetooth testing in RF chambers with PoE access points and signal generators; iPerf throughput and Wireshark captures.', 'A ~1,000-Chromebook RF chamber lab behind programmable attenuators and servos; shielded racks for Roku, RDK and Chromecast.', 'Firmware validation on 1,000+ Stadia Wi-Fi/BT controllers; Wear OS firmware validation at Fitbit.'],
+      kit: ['IEEE 802.11', 'WLAN/BT', 'RF chambers', 'Attenuators', 'Signal generators', 'iPerf', 'Wireshark'], roles: ['chromeos', 'apple', 'bayside', 'stadia', 'fitbit'] },
     { k: 'L2–3', name: 'Network', tag: 'Switching, routing, connectivity', color: '--fix', sub: 'Cisco · AWS · Google Stadia',
       bullets: ['Built QA testbeds on Nexus 9K/7K switches, UCS servers, terminal/TFTP servers and Ixia traffic generators.', 'Implemented OSPF, EIGRP, BGP, MPLS, OTV, vPC and FabricPath; Layer 1–3 support.', 'Verified routing, fiber mapping and ToR connectivity for AWS SFO clusters.', 'Set up lab networks with VLANs, switch configs and emulation routers.'],
       kit: ['Nexus 9K/7K', 'OSPF', 'BGP', 'MPLS', 'VLAN', 'Ixia', 'CCNA'], roles: ['cisco', 'aws', 'stadia'] },
     { k: 'L4+', name: 'Compute & cloud', tag: 'Servers, hosts, images', color: '--ok', sub: 'Google Stadia · Google (Bayside) · Cisco',
       bullets: ['Ran GPU labs of 150+ servers and 300+ GPUs: installs, GPU drivers, BIOS and firmware updates.', 'Imaged Debian hosts with PXE and USB, configured GRUB and BIOS/UEFI, and provisioned with Ansible.', 'Monitored host servers for PCIe link health, OS image currency and drive capacity; hands-on with Docker and Kubernetes.'],
       kit: ['Linux', 'PXE', 'Ansible', 'GPU servers', 'iDRAC', 'Docker', 'Kubernetes'], roles: ['stadia', 'bayside', 'cisco'] },
-    { k: 'L7', name: 'Automation & AI', tag: 'Python, CI, AI monitoring', color: '--accent', sub: 'Google (Bayside) · Google Chrome OS · YouTube · Apple',
-      bullets: ['Python frameworks built from scratch: flash devices at scale, batch-pull IMEI and Wi-Fi chipset data.', 'AI-assisted monitoring for ~5,000 devices that auto-recovers failures and files ~30 prioritized bugs a week.', 'Servo-driven bring-up automation at Chrome OS and the provisioning script behind Cisco\'s Ixia testbeds.'],
-      kit: ['Python', 'Bash', 'Ansible', 'YAML', 'AI monitoring'], roles: ['bayside', 'chromeos', 'cisco'] },
+    { k: 'L7', name: 'Automation & CI/CD', tag: 'Python, Jenkins, GitLab, AI', color: '--accent', sub: 'Google (Bayside) · Google Chrome OS · Apple · Fitbit',
+      bullets: ['Python frameworks built from scratch: flash devices at scale, batch-pull IMEI and Wi-Fi chipset data.', 'AI-assisted monitoring for ~5,000 devices that auto-recovers failures and files ~30 prioritized bugs a week.', 'Servo-driven bring-up automation at Chrome OS and the provisioning script behind Cisco\'s Ixia testbeds.', 'Ran and monitored Jenkins and GitLab test jobs at Apple; code fixes validated in staging at Fitbit; staging hosts for firmware validation at Google.'],
+      kit: ['Python', 'Bash', 'Ansible', 'YAML', 'Jenkins', 'GitLab CI', 'AI monitoring'], roles: ['bayside', 'chromeos', 'apple', 'fitbit', 'cisco'] },
   ];
   const layersEl = $('#layers'), lp = $('#layer-panel'); let layer = 1;
   LAYERS.forEach((L, i) => {
